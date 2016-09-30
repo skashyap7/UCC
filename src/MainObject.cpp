@@ -852,6 +852,23 @@ int MainObject::ParseCommandLine(int argc, char *argv[])
 		{
 			g_no_uncounted = true;
 		}
+		else if (arg == "-header")
+		{
+			if (i + 1 >= argc)
+			{
+				string info = "Information: -header  Header file missing. Using default header for output";
+				userIF->AddError(info);
+			}
+			else
+			{
+				i++;
+				userHeaderFile = argv[i];
+			}
+		}
+		else if (arg == "-noheader")
+		{
+			remove_Header = true;
+		}
 		else
 		{
 			// Let User know unable to recognize this arg

@@ -84,6 +84,7 @@ time_t	time_end_files_analysis = 0;
 //
 
 string		cmdLine;						//!< Executed command line string
+string userHeaderFile;                      //!< Custom Header file path 
 
 bool		isDiff = false;					//!< Has differencing been requested (-d)?
 bool		visualDiff = false;				//!< Print visual diff
@@ -105,6 +106,7 @@ bool print_csv;									//!< Print CSV report files
 bool print_ascii;								//!< Print ASCII text report files
 bool print_legacy;								//!< Print legacy formatted ASCII text report files
 bool print_unified;								//!< Print all counting files in a single unified file
+bool remove_Header;                             //!< Remove Header from output files if set to True
 
 bool g_no_warnings_to_UI = false;				//!< Suppress Warning messages to UI if true.  Warnings are still logged.
 

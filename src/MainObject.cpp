@@ -863,6 +863,16 @@ int MainObject::ParseCommandLine(int argc, char *argv[])
 			{
 				i++;
 				userHeaderFile = argv[i];
+
+				struct stat info;
+				if ((stat(userHeaderFile.c_str(), &info) != 0) || (info.st_mode & S_IFDIR))    // Modification: 2015.12
+				{
+					string err = "Error: -header  Invalid File Path (";
+					err += userHeaderFile;
+					err += ") either not found or not a file.";
+					userIF->AddError(err);
+					return 0;
+				}
 			}
 		}
 		else if (arg == "-noheader")

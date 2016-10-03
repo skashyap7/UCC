@@ -1143,6 +1143,17 @@ void MainObject::ShowUsage(const string &option, bool do_exit, string * outMsg )
 		msg += "Usage: ucc -nouncounted\n\n";
 		msg += " -nouncounted    Disables reports or messages about uncounted files.\n";
 	}
+	else if (option == "-noheader")
+	{
+		msg += "Usage: ucc -noheader\n\n";
+		msg += " -noheader    Removes the default header in reports.\n";
+	}
+	else if (option == "-header")
+	{
+		msg += "Usage: ucc -header <filename>\n\n";
+		msg += " -header <filename>    Replaces the default header in the reports with contents\n";
+		msg += "                       of the <filename>\n";
+	}
 	else if (option == "-h" || option == "-help")
 	{
 		msg += "Usage: ucc -help <option>\n\n";
@@ -1209,6 +1220,9 @@ void MainObject::ShowUsage(const string &option, bool do_exit, string * outMsg )
 		msg += "                      Warning messages will still be logged.\n";
 		msg += "                      Error messages will still show on console.\n";
 		msg += " -nouncounted       Disables reports or messages about uncounted files.\n";
+		msg += " -header <filename> Replaces the default header in the reports with contents\n";
+		msg += "                    of the <filename>\n";
+		msg += " -noheader          Removes the default header in reports.\n";
 		msg += " -help <option>     Displays this usage or usage for a specified option.\n";
 	}
 

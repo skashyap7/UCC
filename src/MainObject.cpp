@@ -856,7 +856,7 @@ int MainObject::ParseCommandLine(int argc, char *argv[])
 		{
 			if (i + 1 >= argc)
 			{
-				string info = "Information: -header  Header file missing. Using default header for output";
+				string info = "Information: -header  Header file missing. Using default header for output.";
 				userIF->AddError(info);
 			}
 			else
@@ -865,13 +865,11 @@ int MainObject::ParseCommandLine(int argc, char *argv[])
 				userHeaderFile = argv[i];
 
 				struct stat info;
-				if ((stat(userHeaderFile.c_str(), &info) != 0) || (info.st_mode & S_IFDIR))    // Modification: 2015.12
+				if ((stat(userHeaderFile.c_str(), &info) != 0) || (info.st_mode & S_IFDIR) || (info.st_size == 0))    
 				{
-					string err = "Error: -header  Invalid File Path (";
-					err += userHeaderFile;
-					err += ") either not found or not a file.";
-					userIF->AddError(err);
-					return 0;
+					string info = "Information: -header Invalid header file path or the file is empty. Using default header for output.";
+					userIF->AddError(info);
+					userHeaderFile = "";
 				}
 			}
 		}

@@ -143,7 +143,8 @@ int PrintFileHeader(ofstream &pout, const string &title, const string &cmd) // M
 #endif
 	if (!remove_Header)
 	{
-		if (userHeaderFile.size() == 0)
+		// If the custom header is empt, use default behavior
+		if (userHeaderFile.size() == 0)       // Modification: 2016.03
 		{
 			myOutput = "USC Unified CodeCount (UCC)";
 			PrintFileHeaderLine(pout, myOutput);
@@ -171,6 +172,8 @@ int PrintFileHeader(ofstream &pout, const string &title, const string &cmd) // M
 		}
 		else
 		{
+			// Modification: 2016.03
+			// Use user defined custom header in the report
 			ifstream userDefinedHeader(userHeaderFile.c_str());
 
 			while (getline(userDefinedHeader, myOutput))

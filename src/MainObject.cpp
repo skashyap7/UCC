@@ -852,8 +852,9 @@ int MainObject::ParseCommandLine(int argc, char *argv[])
 		{
 			g_no_uncounted = true;
 		}
-		else if (arg == "-header")
+		else if (arg == "-header")   // Modification: 2016.12
 		{
+			// Adding options to support -header
 			if (i + 1 >= argc)
 			{
 				string info = "Information: -header  Header file missing. Using default header for output.";
@@ -863,9 +864,11 @@ int MainObject::ParseCommandLine(int argc, char *argv[])
 			{
 				i++;
 				userHeaderFile = argv[i];
-
+				int retval = 0;
 				struct stat info;
-				if ((stat(userHeaderFile.c_str(), &info) != 0) || (info.st_mode & S_IFDIR) || (info.st_size == 0))    
+				retval = stat(userHeaderFile.c_str(), &info);
+				// check if the suggested file is not a directory and is not empty
+				if ((retval != 0) || (info.st_mode & S_IFDIR) || (info.st_size == 0))    
 				{
 					string info = "Information: -header Invalid header file path or the file is empty. Using default header for output.";
 					userIF->AddError(info);
@@ -873,9 +876,10 @@ int MainObject::ParseCommandLine(int argc, char *argv[])
 				}
 			}
 		}
-		else if (arg == "-noheader")
+		else if (arg == "-noheader")   // Modification: 2016.12
 		{
-			remove_Header = true;
+			// Remove any header from the output document
+			remove_Header = true; 
 		}
 		else
 		{

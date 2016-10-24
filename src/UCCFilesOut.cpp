@@ -144,7 +144,7 @@ int PrintFileHeader(ofstream &pout, const string &title, const string &cmd) // M
 	if (!remove_Header)
 	{
 		// If the custom header is empty, use default behavior
-		if (userHeaderFile.size() == 0)       // Modification: 2016.03
+		if (userHeaderFile.size() == 0)       // Modification: 2016.12
 		{
 			myOutput = "USC Unified CodeCount (UCC)";
 			PrintFileHeaderLine(pout, myOutput);
@@ -172,7 +172,7 @@ int PrintFileHeader(ofstream &pout, const string &title, const string &cmd) // M
 		}
 		else
 		{
-			// Modification: 2016.03
+			// Modification: 2016.12
 			// Use user defined custom header in the report
 			ifstream userDefinedHeader(userHeaderFile.c_str());
 
@@ -195,7 +195,7 @@ int PrintFileHeader(ofstream &pout, const string &title, const string &cmd) // M
 *    pout: output file stream
 *
 * 3. Creation time and Owner:
-*    Version 2016.03
+*    Version 2016.12
 */
 int PrintFileFooter(ofstream &pout)
 {
@@ -211,7 +211,7 @@ int PrintFileFooter(ofstream &pout)
 	myLocalTime = &myLT;
 #endif
 	// If remove_Header or custom header specified. Print the copyright in the footer
-	if (userHeaderFile.size() != 0 || remove_Header)       // Modification: 2016.03
+	if (userHeaderFile.size() != 0 || remove_Header)       // Modification: 2016.12
 	{
 		pout << endl;
 		myOutput = "USC Unified CodeCount (UCC)";
@@ -8242,7 +8242,7 @@ int PrintCyclomaticComplexity( const bool useListA, const string &outputFileName
 	}
 
 	if (print_ascii || print_legacy) {
-		// Modification: 2016.03
+		// Modification: 2016.12
 		PrintFileFooter(cycCplxOutputFile);
 		cycCplxOutputFile.close();
 	}

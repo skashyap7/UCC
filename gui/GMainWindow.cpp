@@ -1735,5 +1735,6 @@ void GMainWindow::on_cbxNoHeader_clicked()
         ui.btnCustomHeader->setEnabled(true);
         ui.lblHeader->setText("");
         remove_Header = false;
+        userHeaderFile = "";
     }
 }

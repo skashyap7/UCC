@@ -299,6 +299,10 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
     SourceFileList* mySourceFile = (useListA) ? &SourceFileA : &SourceFileB;    // Modification: 2009.01
     for (its = mySourceFile->begin(); its != mySourceFile->end(); its++)    // Modification: 2009.01
 	{
+		// Get the Module name for the file for src/testing/abc.java the below steps
+		// return testing as the module name
+		std::string pathname = CUtil::ExtractFilepath(its->second.file_name); // Modification : 2016.12
+		its->second.module_name = CUtil::ExtractFilename(pathname);
 		if (filesToPrint != NULL && filesToPrint->size() > 0)
 		{
 			// restrict based on those files in the filesToPrint list
@@ -482,7 +486,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 						(*pout).width(9);	(*pout) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_php.SLOC_lines[PHY]);
 					}
 					(*pout) << " | CODE  ";
-					(*pout) << its->second.file_name << endl;
+					(*pout) << its->second.module_name << endl;
 					(*pout).unsetf(ios::right);
 				}
                 if (print_csv)  // Modification: 2011.05
@@ -506,7 +510,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout_csv) << r_php.SLOC_lines[LOG] << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_php.SLOC_lines[LOG]) << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_php.SLOC_lines[PHY]) << ",";
-					(*pout_csv) << "CODE," << its->second.file_name << endl;
+					(*pout_csv) << "CODE," << its->second.module_name << endl;
 				}
 
 				webtotal[webType].num_of_file++;
@@ -630,7 +634,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 						(*pout).width(9);	(*pout) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_java.SLOC_lines[PHY]);
 					}
 					(*pout) << " | CODE  ";
-					(*pout) << its->second.file_name << endl;
+					(*pout) << its->second.module_name << endl;
 					(*pout).unsetf(ios::right);
 				}
                 if (print_csv)  // Modification: 2011.05
@@ -654,7 +658,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout_csv) << r_java.SLOC_lines[LOG] << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_java.SLOC_lines[LOG]) << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_java.SLOC_lines[PHY]) << ",";
-					(*pout_csv) << "CODE," << its->second.file_name << endl;
+					(*pout_csv) << "CODE," << its->second.module_name << endl;
 				}
 
 				webtotal[webType].num_of_file++;
@@ -804,7 +808,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 						(*pout).width(9);	(*pout) << (r_htm.SLOC_lines[PHY] + r_jsc.SLOC_lines[PHY] + r_vbsc.SLOC_lines[PHY] + r_jss.SLOC_lines[PHY] + r_vbss.SLOC_lines[PHY] + r_css.SLOC_lines[PHY]);
 					}
 					(*pout) << " | CODE  ";
-					(*pout) << its->second.file_name<<endl;
+					(*pout) << its->second.module_name<<endl;
 					(*pout).unsetf(ios::right);
 				}
                 if (print_csv)  // Modification: 2011.05
@@ -833,7 +837,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
                     (*pout_csv) << r_css.SLOC_lines[LOG] << ",";    // Modification: 2011.10
 					(*pout_csv) << (r_htm.SLOC_lines[LOG] + r_jsc.SLOC_lines[LOG] + r_vbsc.SLOC_lines[LOG] + r_jss.SLOC_lines[LOG] + r_vbss.SLOC_lines[LOG] + r_css.SLOC_lines[LOG]) << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[PHY] + r_jsc.SLOC_lines[PHY] + r_vbsc.SLOC_lines[PHY] + r_jss.SLOC_lines[PHY] + r_vbss.SLOC_lines[PHY] + r_css.SLOC_lines[PHY]) << ",";
-					(*pout_csv) << "CODE," << its->second.file_name << endl;
+					(*pout_csv) << "CODE," << its->second.module_name << endl;
 				}
 
 				webtotal[webType].num_of_file++;
@@ -963,7 +967,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 						(*pout).width(9);	(*pout) << (r_xml.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_cs.SLOC_lines[PHY]);
 					}
 					(*pout) << " | CODE  ";
-					(*pout) << its->second.file_name<<endl;
+					(*pout) << its->second.module_name<<endl;
 					(*pout).unsetf(ios::right);
 				}
 				if (print_csv)
@@ -986,7 +990,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout_csv) << r_cs.SLOC_lines[LOG] << ",";
 					(*pout_csv) << (r_xml.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_cs.SLOC_lines[LOG]) << ",";
 					(*pout_csv) << (r_xml.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_cs.SLOC_lines[PHY]) << ",";
-					(*pout_csv) << "CODE," << its->second.file_name << endl;
+					(*pout_csv) << "CODE," << its->second.module_name << endl;
 				}
 
 				webtotal[webType].num_of_file++;
@@ -1134,7 +1138,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 						(*pout).width(9);	(*pout) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_sql.SLOC_lines[PHY] + r_cfm.SLOC_lines[PHY] + r_cfs.SLOC_lines[PHY]);
 					}
 					(*pout) << " | CODE  ";
-					(*pout) << its->second.file_name<<endl;
+					(*pout) << its->second.module_name<<endl;
 					(*pout).unsetf(ios::right);
 				}
                 if (print_csv)  // Modification: 2011.05
@@ -1163,7 +1167,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout_csv) << r_cfs.SLOC_lines[LOG] << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_sql.SLOC_lines[LOG] + r_cfm.SLOC_lines[LOG] + r_cfs.SLOC_lines[LOG]) << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_sql.SLOC_lines[PHY] + r_cfm.SLOC_lines[PHY] + r_cfs.SLOC_lines[PHY]) << ",";
-					(*pout_csv) << "CODE," << its->second.file_name << endl;
+					(*pout_csv) << "CODE," << its->second.module_name << endl;
 				}
 
 				webtotal[webType].num_of_file++;
@@ -1294,7 +1298,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 						(*pout).width(9);	(*pout) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_cs.SLOC_lines[PHY]);
 					}
 					(*pout) << " | CODE  ";
-					(*pout) << its->second.file_name<<endl;
+					(*pout) << its->second.module_name<<endl;
 					(*pout).unsetf(ios::right);
 				}
                 if (print_csv)  // Modification: 2011.05
@@ -1317,7 +1321,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout_csv) << r_cs.SLOC_lines[LOG] << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_cs.SLOC_lines[LOG]) << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_cs.SLOC_lines[PHY]) << ",";
-					(*pout_csv) << "CODE," << its->second.file_name << endl;
+					(*pout_csv) << "CODE," << its->second.module_name << endl;
 				}
 
 				webtotal[webType].num_of_file++;
@@ -1441,7 +1445,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout).width(8);	(*pout) << its->second.SLOC_lines[PHY];
 				}
 				(*pout) << " | " << file_type;
-				(*pout) << "  " << its->second.file_name;
+				(*pout) << "  " << its->second.module_name;
 				(*pout) << endl;
 				(*pout).unsetf(ios::right);
 			}
@@ -1457,7 +1461,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 				(*pout_csv) << its->second.SLOC_lines[LOG] << ",";
 				(*pout_csv) << its->second.SLOC_lines[PHY] << ",";
                 (*pout_csv) << file_type << ",";    // Modification: 2013.04
-				(*pout_csv) << its->second.file_name << endl;
+				(*pout_csv) << its->second.module_name << endl;
 			}
 
 			// total count for physical lines
@@ -3380,6 +3384,10 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 	SourceFileList* mySourceFile = (useListA) ? &SourceFileA : &SourceFileB;
 	for (its = mySourceFile->begin(); its != mySourceFile->end(); its++)
 	{
+		// Get the Module name for the file for src/testing/abc.java the below steps
+		// return testing as the module name
+		std::string pathname = CUtil::ExtractFilepath(its->second.file_name); // Modification : 2016.12
+		its->second.module_name = CUtil::ExtractFilename(pathname);
 		if (filesToPrint != NULL && filesToPrint->size() > 0)
 		{
 			// restrict based on those files in the filesToPrint list
@@ -3519,7 +3527,7 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout).width(8);	(*pout) << its->second.SLOC_lines[PHY];
 				}
 				(*pout) << " | " << file_type;											// Modification: 2014.08
-				(*pout) << " " << its->second.file_name;						// Modification: 2011.10
+				(*pout) << " " << its->second.module_name;						// Modification: 2016.12
 				(*pout) << endl;
 				(*pout).unsetf(ios::right);
 			}
@@ -3536,7 +3544,7 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 				(*pout_csv) << its->second.SLOC_lines[LOG] << ",";
 				(*pout_csv) << its->second.SLOC_lines[PHY] << ",";
 				(*pout_csv) << file_type << ",";												// Modification: 2014.08
-				(*pout_csv) << its->second.file_name << endl;					// Modification: 2011.10
+				(*pout_csv) << its->second.module_name << endl;					// Modification: 2016.12
 			}
 
 			// total count for physical lines of this class type
@@ -4047,7 +4055,7 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 						(*pout).width(9);	(*pout) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_php.SLOC_lines[PHY]);
 					}
 					(*pout) << " | CODE  ";
-					(*pout) << its->second.file_name << endl;
+					(*pout) << its->second.module_name << endl;
 					(*pout).unsetf(ios::right);
 				}
 				// CSV format

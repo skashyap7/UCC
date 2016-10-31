@@ -191,6 +191,7 @@ void results::reset()
 	// File related values
 	file_name_isEmbedded = false;	// Modification: 2015.12
 	file_name = "";
+	module_name = "";               // Modification: 2016.12
 	file_name_only = "";			// Modification: 2015.12
 	clearCaseTrailer = "";			// Modification: 2015.12
 	file_type = DATA;

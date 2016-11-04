@@ -85,6 +85,10 @@ private slots:
 
     void on_cbxNoHeader_clicked();
 
+    void on_txtHeader_textChanged(const QString &arg1);
+
+    void on_txtHeader_editingFinished();
+
 private:
     Ui::GMainWindowClass ui;
 

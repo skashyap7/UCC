@@ -865,35 +865,19 @@
       <widget class="QGroupBox" name="gbxHeader">
        <property name="geometry">
         <rect>
-         <x>840</x>
-         <y>20</y>
-         <width>241</width>
-         <height>161</height>
+         <x>460</x>
+         <y>200</y>
+         <width>641</width>
+         <height>71</height>
         </rect>
        </property>
        <property name="title">
         <string>Custom Header</string>
        </property>
-       <widget class="QLabel" name="lblHeader">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>50</y>
-          <width>201</width>
-          <height>91</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
        <widget class="QCheckBox" name="cbxNoHeader">
         <property name="geometry">
          <rect>
-          <x>20</x>
+          <x>10</x>
           <y>20</y>
           <width>71</width>
           <height>21</height>
@@ -906,14 +890,24 @@
        <widget class="QPushButton" name="btnCustomHeader">
         <property name="geometry">
          <rect>
-          <x>120</x>
-          <y>20</y>
+          <x>540</x>
+          <y>32</y>
           <width>91</width>
-          <height>23</height>
+          <height>31</height>
          </rect>
         </property>
         <property name="text">
          <string>Add Header File</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="txtHeader">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>40</y>
+          <width>521</width>
+          <height>20</height>
+         </rect>
         </property>
        </widget>
       </widget>

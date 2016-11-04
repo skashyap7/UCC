@@ -1704,6 +1704,10 @@ void GMainWindow::dragEnterEvent(QDragEnterEvent *ev)
     }
 }
 
+/*
+    Oct 22 2016
+    button used for choosing custom header text file
+*/
 void GMainWindow::on_btnCustomHeader_clicked()
 {
     ui.statusBar->showMessage(tr("Loading file browser..."));
@@ -1716,6 +1720,11 @@ void GMainWindow::on_btnCustomHeader_clicked()
     ui.lblHeader->setText(QString::fromStdString(labelText));
 }
 
+/*
+    Oct 22 2016
+    check box for no header
+*/
+
 void GMainWindow::on_cbxNoHeader_clicked()
 {
     if (ui.cbxNoHeader->checkState() == Qt::Checked){
@@ -1726,5 +1735,6 @@ void GMainWindow::on_cbxNoHeader_clicked()
         ui.btnCustomHeader->setEnabled(true);
         ui.lblHeader->setText("");
         remove_Header = false;
+        userHeaderFile = "";
     }
 }

@@ -2085,6 +2085,7 @@ int DiffPairsInList( const unsigned int					threadIdx,
 		inc_amount = 1;
 	unsigned int	UI_count_down = inc_amount;
 #define		UI_DIFF_UPDATE_COUNT	5
+	string diffDetails;
 
 //		BIG Loop to process all the Matched Pairs
 //
@@ -2252,30 +2253,31 @@ int DiffPairsInList( const unsigned int					threadIdx,
 				unmatchedDup = false;
 		}
 
-        // Before Compare, output paired file names into file_dump.txt       Modification: 2014.08  
-        // Use pointer to diff tool class to use from potential thread code  Modification: 2015.12
-		if ( MAIN_THREAD_INDEX == threadIdx )
+		// this makes sure that if one of the files was unmatched it will just compare it against an empty set
+		diffDetails = pDiffManager->Compare(firstFile, secondFile, match_threshold);
+
+		// Use pointer to diff tool class to use from potential thread code  Modification: 2015.12
+		//Only output modified files in outfile_file_dump  Modification: 2016.10
+		if (!diffDetails.empty() && MAIN_THREAD_INDEX == threadIdx)
 		{
-			if ( pDiffTool->outfile_file_dump )
+			if (pDiffTool->outfile_file_dump)
 			{
 				if ((*myI).second.first == NULL) {
-					pDiffTool->outfile_file_dump << "NA" <<endl;
+					pDiffTool->outfile_file_dump << "NA" << endl;
 				}
 				else {
-					pDiffTool->outfile_file_dump << (*myI).second.first->second.file_name <<endl;
+					pDiffTool->outfile_file_dump << (*myI).second.first->second.file_name << endl;
 				}
 				if ((*myI).second.second == NULL) {
-					pDiffTool->outfile_file_dump << "NA" <<endl;
+					pDiffTool->outfile_file_dump << "NA" << endl;
 				}
 				else {
-					pDiffTool->outfile_file_dump << (*myI).second.second->second.file_name<<endl;
+					pDiffTool->outfile_file_dump << (*myI).second.second->second.file_name << endl;
 				}
+				pDiffTool->outfile_file_dump << diffDetails << endl;
 				pDiffTool->outfile_file_dump.flush();	// Save in case of LOW Memory
 			}
 		}
-
-		// this makes sure that if one of the files was unmatched it will just compare it against an empty set
-		pDiffManager->Compare(firstFile, secondFile, match_threshold);
 
 		// if the file is a class of type WEB, keep a list
 		if (web_file_name.size() > 0)

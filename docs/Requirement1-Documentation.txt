@@ -1,0 +1,42 @@
+CmdLine switches for -header and -noheader
+---------------------------
+UCC.exe -help -header
+Usage: ucc -header <filename>
+
+ -header <filename>    Replaces the default header in the reports with contents
+                       of the <filename>
+
+Usage example:
+
+UCC.exe -d <dir1> -header <custom_header_file_path>
+
+> UCC.exe -help -noheader
+Usage: ucc -noheader
+
+ -noheader    Removes the default header in reports.
+
+
+Usage Example:
+
+UCC.exe -d <dir1> -noheader
+
+
+
+------------------------------------------------------------------------
+                CODE MAPPING
+------------------------------------------------------------------------
+
+1. Functionality 1 ( support -noheader and -header switches with UCC)
+    Files changed:
+    i) UCCGlobals.h : Introduced new variables
+        - bool remove_Header
+        - string userHeaderFile
+
+    ii) MainObject.cpp : Logic to parse for UCC switches
+        - look for -header <header_filename> and set userHeaderFile variable
+        - look for -noheader option specified and set remove_Header variable
+
+    iii) UCCFilesOut.cpp : Introduced Logic that outputs custom_header
+        Function modified: PrintFileHeader
+
+

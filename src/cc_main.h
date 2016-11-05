@@ -275,6 +275,7 @@ public:
 	bool      e_flag;					//!< Set to true if error occurs during processing
 	bool      file_name_isEmbedded;		//!< true if an Embedded file with *.* as part of the name  Modification: 2015.12
 	string    file_name;				//!< File path and name
+	string    module_name;              //!< Module name (if unavailable, default to file name)  //Modification : 2016.12
 	string    file_name_only;			//!< File name only, used by Duplicate (a lot) & Differencing  Modification: 2015.12
 	string    clearCaseTrailer;			//!< Saved to allow Reading source lines later than other file info  Modification: 2015.12
 	int       file_type;				//!< File type (DATA, CODE)

@@ -100,7 +100,8 @@ ofstream output_file_csv;					//!< Total output CSV file stream
 //
 int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 						TotalValueMap &total, WebTotalValueMap &webtotal,
-						const string &outputFileNamePrePend = "" );
+						ModuleMap &modulemap,
+						const string &outputFileNamePrePend = "");
 
 int PrintCyclomaticComplexity(const bool useListA, const string &outputFileNamePrePend, const bool printDuplicates);
 
@@ -289,16 +290,31 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
         string file_type;		// Modification: 2013.04
         CWebCounter *webCounter;		// Modification: 2011.10
         WebType webType;		// Modification: 2011.10
-
+		vector<string> FilePaths; // Modification: 2016.12
+		string basepath;          // Modification: 2016.12
+		ModuleMap ModuleMapping; //Modification
 	// skip if all files are excluded
     if (filesToPrint != NULL && filesToPrint->size() < 1 && !excludeFiles)  // Modification: 2011.05
 		return 0;
-
+	
     // iterate every souce file
     SourceFileList::iterator its;   // Modification: 2009.01
     SourceFileList* mySourceFile = (useListA) ? &SourceFileA : &SourceFileB;    // Modification: 2009.01
+	for (its = mySourceFile->begin(); its != mySourceFile->end(); its++)    // Modification: 2009.01
+	{
+		FilePaths.push_back(its->second.file_name);
+	}
+	basepath = CUtil::ExtractBaseDirectory(FilePaths);
     for (its = mySourceFile->begin(); its != mySourceFile->end(); its++)    // Modification: 2009.01
 	{
+		its->second.module_name = CUtil::ExtractModuleName(its->second.file_name, basepath); // Modification : 2016.12
+		if ( ModuleMapping.count(its->second.module_name) == 0)
+		{
+			ModuleMapping[its->second.module_name] = 1;
+		}
+		else {
+			ModuleMapping[its->second.module_name] += 1;
+		}
 		if (filesToPrint != NULL && filesToPrint->size() > 0)
 		{
 			// restrict based on those files in the filesToPrint list
@@ -323,6 +339,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
         // Deal with WEB type specially
         if (its->second.class_type == WEB)  // Modification: 2009.01
 		{
+			
 			SourceFileList::iterator startpos = its;
 			SourceFileList::iterator endpos = ++startpos;
 			for (; endpos!= mySourceFile->end(); endpos++)
@@ -482,7 +499,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 						(*pout).width(9);	(*pout) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_php.SLOC_lines[PHY]);
 					}
 					(*pout) << " | CODE  ";
-					(*pout) << its->second.file_name << endl;
+					(*pout) << its->second.module_name << endl;
 					(*pout).unsetf(ios::right);
 				}
                 if (print_csv)  // Modification: 2011.05
@@ -506,7 +523,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout_csv) << r_php.SLOC_lines[LOG] << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_php.SLOC_lines[LOG]) << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_php.SLOC_lines[PHY]) << ",";
-					(*pout_csv) << "CODE," << its->second.file_name << endl;
+					(*pout_csv) << "CODE," << its->second.module_name << endl;
 				}
 
 				webtotal[webType].num_of_file++;
@@ -630,7 +647,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 						(*pout).width(9);	(*pout) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_java.SLOC_lines[PHY]);
 					}
 					(*pout) << " | CODE  ";
-					(*pout) << its->second.file_name << endl;
+					(*pout) << its->second.module_name << endl;
 					(*pout).unsetf(ios::right);
 				}
                 if (print_csv)  // Modification: 2011.05
@@ -654,7 +671,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout_csv) << r_java.SLOC_lines[LOG] << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_java.SLOC_lines[LOG]) << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_java.SLOC_lines[PHY]) << ",";
-					(*pout_csv) << "CODE," << its->second.file_name << endl;
+					(*pout_csv) << "CODE," << its->second.module_name << endl;
 				}
 
 				webtotal[webType].num_of_file++;
@@ -804,7 +821,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 						(*pout).width(9);	(*pout) << (r_htm.SLOC_lines[PHY] + r_jsc.SLOC_lines[PHY] + r_vbsc.SLOC_lines[PHY] + r_jss.SLOC_lines[PHY] + r_vbss.SLOC_lines[PHY] + r_css.SLOC_lines[PHY]);
 					}
 					(*pout) << " | CODE  ";
-					(*pout) << its->second.file_name<<endl;
+					(*pout) << its->second.module_name<<endl;
 					(*pout).unsetf(ios::right);
 				}
                 if (print_csv)  // Modification: 2011.05
@@ -833,7 +850,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
                     (*pout_csv) << r_css.SLOC_lines[LOG] << ",";    // Modification: 2011.10
 					(*pout_csv) << (r_htm.SLOC_lines[LOG] + r_jsc.SLOC_lines[LOG] + r_vbsc.SLOC_lines[LOG] + r_jss.SLOC_lines[LOG] + r_vbss.SLOC_lines[LOG] + r_css.SLOC_lines[LOG]) << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[PHY] + r_jsc.SLOC_lines[PHY] + r_vbsc.SLOC_lines[PHY] + r_jss.SLOC_lines[PHY] + r_vbss.SLOC_lines[PHY] + r_css.SLOC_lines[PHY]) << ",";
-					(*pout_csv) << "CODE," << its->second.file_name << endl;
+					(*pout_csv) << "CODE," << its->second.module_name << endl;
 				}
 
 				webtotal[webType].num_of_file++;
@@ -963,7 +980,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 						(*pout).width(9);	(*pout) << (r_xml.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_cs.SLOC_lines[PHY]);
 					}
 					(*pout) << " | CODE  ";
-					(*pout) << its->second.file_name<<endl;
+					(*pout) << its->second.module_name<<endl;
 					(*pout).unsetf(ios::right);
 				}
 				if (print_csv)
@@ -986,7 +1003,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout_csv) << r_cs.SLOC_lines[LOG] << ",";
 					(*pout_csv) << (r_xml.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_cs.SLOC_lines[LOG]) << ",";
 					(*pout_csv) << (r_xml.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_cs.SLOC_lines[PHY]) << ",";
-					(*pout_csv) << "CODE," << its->second.file_name << endl;
+					(*pout_csv) << "CODE," << its->second.module_name << endl;
 				}
 
 				webtotal[webType].num_of_file++;
@@ -1134,7 +1151,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 						(*pout).width(9);	(*pout) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_sql.SLOC_lines[PHY] + r_cfm.SLOC_lines[PHY] + r_cfs.SLOC_lines[PHY]);
 					}
 					(*pout) << " | CODE  ";
-					(*pout) << its->second.file_name<<endl;
+					(*pout) << its->second.module_name<<endl;
 					(*pout).unsetf(ios::right);
 				}
                 if (print_csv)  // Modification: 2011.05
@@ -1163,7 +1180,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout_csv) << r_cfs.SLOC_lines[LOG] << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_sql.SLOC_lines[LOG] + r_cfm.SLOC_lines[LOG] + r_cfs.SLOC_lines[LOG]) << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_sql.SLOC_lines[PHY] + r_cfm.SLOC_lines[PHY] + r_cfs.SLOC_lines[PHY]) << ",";
-					(*pout_csv) << "CODE," << its->second.file_name << endl;
+					(*pout_csv) << "CODE," << its->second.module_name << endl;
 				}
 
 				webtotal[webType].num_of_file++;
@@ -1294,7 +1311,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 						(*pout).width(9);	(*pout) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_cs.SLOC_lines[PHY]);
 					}
 					(*pout) << " | CODE  ";
-					(*pout) << its->second.file_name<<endl;
+					(*pout) << its->second.module_name<<endl;
 					(*pout).unsetf(ios::right);
 				}
                 if (print_csv)  // Modification: 2011.05
@@ -1317,7 +1334,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout_csv) << r_cs.SLOC_lines[LOG] << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_cs.SLOC_lines[LOG]) << ",";
 					(*pout_csv) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_cs.SLOC_lines[PHY]) << ",";
-					(*pout_csv) << "CODE," << its->second.file_name << endl;
+					(*pout_csv) << "CODE," << its->second.module_name << endl;
 				}
 
 				webtotal[webType].num_of_file++;
@@ -1441,7 +1458,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout).width(8);	(*pout) << its->second.SLOC_lines[PHY];
 				}
 				(*pout) << " | " << file_type;
-				(*pout) << "  " << its->second.file_name;
+				(*pout) << "  " << its->second.module_name;
 				(*pout) << endl;
 				(*pout).unsetf(ios::right);
 			}
@@ -1457,7 +1474,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 				(*pout_csv) << its->second.SLOC_lines[LOG] << ",";
 				(*pout_csv) << its->second.SLOC_lines[PHY] << ",";
                 (*pout_csv) << file_type << ",";    // Modification: 2013.04
-				(*pout_csv) << its->second.file_name << endl;
+				(*pout_csv) << its->second.module_name << endl;
 			}
 
 			// total count for physical lines
@@ -3088,7 +3105,6 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 
 			(*pout_csv) << endl << "Ratio of Physical to Logical SLOC,";
 		}
-		
 		unsigned int tlsloc = itto->second.log_direct + itto->second.log_decl + itto->second.log_instr;
 		if (tlsloc > 0)
 		{
@@ -3329,7 +3345,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 		iter->second->CloseOutputStream();
 
 	// print out language count summary
-    if (!PrintCountSummary( CounterForEachLanguage, total, webtotal, outputFileNamePrePend)) // Modification: 2011.10
+    if (!PrintCountSummary( CounterForEachLanguage, total, webtotal, ModuleMapping, outputFileNamePrePend)) // Modification: 2011.10
 		return 0;
 
     return 1;   // Modification: 2011.10
@@ -3370,7 +3386,9 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 	string file_type;
 	CWebCounter *webCounter;
 	WebType webType;					// Moidfication: 2011.10
-
+	vector<string> FilePaths; // Modification: 2016.12
+	string basepath;          // Modification: 2016.12
+	ModuleMap ModuleMapping;  // Modification 2016.12
 	// skip if all files are excluded
 	if (filesToPrint != NULL && filesToPrint->size() < 1 && !excludeFiles)			// Modification: 2011.05
 		return 0;
@@ -3378,8 +3396,22 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 	// display each non-web count
 	SourceFileList::iterator its;
 	SourceFileList* mySourceFile = (useListA) ? &SourceFileA : &SourceFileB;
+	for (its = mySourceFile->begin(); its != mySourceFile->end(); its++)    // Modification: 2009.01
+	{
+		//string path = CUtil::ExtractFilepath(); // Modification : 2016.12
+		FilePaths.push_back(its->second.file_name);
+	}
+	basepath = CUtil::ExtractBaseDirectory(FilePaths);
 	for (its = mySourceFile->begin(); its != mySourceFile->end(); its++)
 	{
+		its->second.module_name = CUtil::ExtractModuleName(its->second.file_name, basepath); // Modification :2016.12
+		if (ModuleMapping.count(its->second.module_name) == 0)
+		{
+			ModuleMapping[its->second.module_name] = 1;
+		}
+		else {
+			ModuleMapping[its->second.module_name] += 1;
+		}
 		if (filesToPrint != NULL && filesToPrint->size() > 0)
 		{
 			// restrict based on those files in the filesToPrint list
@@ -3519,7 +3551,7 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout).width(8);	(*pout) << its->second.SLOC_lines[PHY];
 				}
 				(*pout) << " | " << file_type;											// Modification: 2014.08
-				(*pout) << " " << its->second.file_name;						// Modification: 2011.10
+				(*pout) << " " << its->second.module_name;						// Modification: 2016.12
 				(*pout) << endl;
 				(*pout).unsetf(ios::right);
 			}
@@ -3536,7 +3568,7 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 				(*pout_csv) << its->second.SLOC_lines[LOG] << ",";
 				(*pout_csv) << its->second.SLOC_lines[PHY] << ",";
 				(*pout_csv) << file_type << ",";												// Modification: 2014.08
-				(*pout_csv) << its->second.file_name << endl;					// Modification: 2011.10
+				(*pout_csv) << its->second.module_name << endl;					// Modification: 2016.12
 			}
 
 			// total count for physical lines of this class type
@@ -4047,7 +4079,7 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 						(*pout).width(9);	(*pout) << (r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_php.SLOC_lines[PHY]);
 					}
 					(*pout) << " | CODE  ";
-					(*pout) << its->second.file_name << endl;
+					(*pout) << its->second.module_name << endl;
 					(*pout).unsetf(ios::right);
 				}
 				// CSV format
@@ -6292,11 +6324,10 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 	// close all files
 	for (map<int, CCodeCounter*>::iterator iter=CounterForEachLanguage.begin(); iter!=CounterForEachLanguage.end(); iter++)
 		iter->second->CloseOutputStream();
-
 	CloseTotalOutputStream();
 
 	// print out language count summary
-	if (!PrintCountSummary( CounterForEachLanguage, total, webtotal, outputFileNamePrePend))	// Modification: 2013.04  2015.12
+	if (!PrintCountSummary( CounterForEachLanguage, total, webtotal, ModuleMapping, outputFileNamePrePend))	// Modification: 2013.04  2015.12
 		return 0;
 
 	return 1;
@@ -6318,6 +6349,7 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 */
 int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 						TotalValueMap &total, WebTotalValueMap &webtotal,
+						ModuleMap &modulemap,
 						const string &outputFileNamePrePend)			// Modification: 2014.08
 {
 	ofstream *pout = NULL;
@@ -6520,6 +6552,27 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 
 		if (rCnt > 0)
 			(*pout_csv) << endl << "Total," << fTot << "," << pTot << "," << lTot << endl;
+	}
+	if (print_ascii)
+	{
+		(*pout) << endl << "Summary of Module based counts" << endl;
+		(*pout) << endl << "Module Name,File Count" << endl;
+	}
+	if (print_csv)
+	{
+		(*pout_csv) << endl << "Summary of Module based counts" << endl;
+		(*pout_csv) << endl << "Module Name,File Count" << endl;
+	}
+	for (ModuleMap::iterator it = modulemap.begin(); it != modulemap.end(); it++)
+	{
+		if (print_ascii)
+		{
+			(*pout) <<  it->first << "," << it->second << endl;
+		}
+		if (print_csv)
+		{
+			(*pout_csv) << it->first << "," << it->second << endl;
+		}
 	}
 	CloseOutputSummaryStream();
 

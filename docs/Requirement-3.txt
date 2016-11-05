@@ -1,0 +1,22 @@
+External Impact
+---------------------------
+There are no input changes required. However the new output displays the module name
+as the directory containing the file instead of the file name
+
+
+------------------------------------------------------------------------
+                CODE MAPPING
+------------------------------------------------------------------------
+
+1. Functionality 3 ( support summary of counts based on module_names)
+    Files changed:
+    i) cc_main.h : Introduced new member variable
+        - string module_name
+
+    i) cc_main.cpp : In method results::reset()
+        - reset module_name = ""
+
+    iii) UCCFilesOut.cpp : PrintTotalCountResults() and PrintCountResults()
+        Printed module_name extracted in UCCThread.cpp
+
+

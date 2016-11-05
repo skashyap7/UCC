@@ -74,7 +74,7 @@ extern	string	outDir;			//!< Output directory
 	* Defines a map of count totals.
 	*/
 	typedef map<int, TotalValue> TotalValueMap;
-
+	typedef map<string, int> ModuleMap;  // Modification 2016.12
 
 	//! Structure to contain web language count totals.
 	/*!
@@ -125,7 +125,6 @@ extern	string	outDir;			//!< Output directory
 	* Defines a map of web language count totals.
 	*/
 	typedef map<WebType, WebTotalValue> WebTotalValueMap;
-
 
 	//! Structure to contain all web language count totals for unified output.
 	/*!

@@ -118,9 +118,11 @@ public:
 	static void CountDistinctCond(string &valid_statement, const string &base, StringVector &constainer, unsigned int &count, int mode, const string &exclude, const string &include1, const string &include2, set<string> &set, UIntVector *counter_container = 0, bool case_sensitive = true);
 
     static string ExtractFilename(const string &filepath);
+	static string ExtractModuleName(const string &filepath, const string &basepath);
     static string ExtractFilepath(const string &filepath);
-
-    // Helper used for smarter Estimates to help with RAM usage.
+	static string CUtil::ExtractBaseDirectory(vector<string> &filepath);
+    
+	// Helper used for smarter Estimates to help with RAM usage.
     static unsigned long long GetFileSizeInBytes( const string file );
 
 	// Build a List of Files; of given file Extension(s) starting from a Directory; maybe follow symbolic links.

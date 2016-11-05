@@ -945,6 +945,70 @@ string CUtil::ExtractFilename(const string &filepath)
     else
         return filename;
 }
+/*!
+* 1. Function Description:
+*    Extracts the base directory in the list of filepaths.
+*    ex. [abc\def\xyz.cpp, abc\a.txt, abc\ghi\d.txt, abc\xyz.txt]
+*	 has base directory as "abc"
+*    Return base-directory
+*
+* 2. Parameters:
+*    filepaths: vector of file paths
+*
+* 3. Creation time and Owner:
+*    Version 2016.12
+*/
+string CUtil::ExtractBaseDirectory(vector<string> &filepaths)
+{
+#ifdef UNIX
+	char separator = '/';                 // UNIX 
+#else
+	char separator = '\\';				 // Windows
+#endif
+	vector<string>::iterator it = filepaths.begin();
+	int maxLength = it->length();
+	string matchString = *it;
+	for( it = filepaths.begin()+1; it != filepaths.end(); it++ )
+	{
+		string path = *it;
+		pair<string::iterator, string::iterator> s_itr = std::mismatch(matchString.begin(),matchString.end(),path.begin());
+		if (s_itr.first - matchString.begin() < maxLength)
+			maxLength = s_itr.first - matchString.begin();
+	}
+	string::size_type found = matchString.rfind(separator, maxLength);
+	if (found == std::string::npos)
+		return matchString;
+	return matchString.substr(0, found);
+}
+/*!
+* 1. Function Description:
+*    Extracts the first directory encountered in the filepath.
+*    ex. abc\def\xyz.cpp --> abc
+*    Return directory
+*
+* 2. Parameters:
+*    filepath: file path
+*
+* 3. Creation time and Owner:
+*    Version 2016.12
+*/
+string CUtil::ExtractModuleName(const string &filepath, const string &basepath)
+{
+#ifdef UNIX
+	char separator = '/';                 // UNIX 
+#else
+	char separator = '\\';				 // Windows
+#endif
+	string path = filepath;
+	string::size_type found = filepath.rfind(basepath);
+	if (found == std::string::npos)
+		return filepath;
+	string temp = filepath.substr(found + basepath.length()+1, filepath.length());
+	size_t idx = temp.find_first_of(separator);
+	if ( idx == std::string::npos)
+		return temp;
+	return temp.substr(0,idx);
+}
 
 /*!
 * 1. Function Description:
@@ -989,6 +1053,7 @@ string CUtil::ExtractFilepath(const string &filepath)
     else
         return "";
 }
+
 
 // Helper used for smarter Estimates to help with RAM usage.
 /*!

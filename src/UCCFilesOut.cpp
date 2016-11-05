@@ -100,7 +100,8 @@ ofstream output_file_csv;					//!< Total output CSV file stream
 //
 int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 						TotalValueMap &total, WebTotalValueMap &webtotal,
-						const string &outputFileNamePrePend = "" );
+						ModuleMap &modulemap,
+						const string &outputFileNamePrePend = "");
 
 int PrintCyclomaticComplexity(const bool useListA, const string &outputFileNamePrePend, const bool printDuplicates);
 
@@ -289,20 +290,31 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
         string file_type;		// Modification: 2013.04
         CWebCounter *webCounter;		// Modification: 2011.10
         WebType webType;		// Modification: 2011.10
-
+		vector<string> FilePaths; // Modification: 2016.12
+		string basepath;          // Modification: 2016.12
+		ModuleMap ModuleMapping; //Modification
 	// skip if all files are excluded
     if (filesToPrint != NULL && filesToPrint->size() < 1 && !excludeFiles)  // Modification: 2011.05
 		return 0;
-
+	
     // iterate every souce file
     SourceFileList::iterator its;   // Modification: 2009.01
     SourceFileList* mySourceFile = (useListA) ? &SourceFileA : &SourceFileB;    // Modification: 2009.01
+	for (its = mySourceFile->begin(); its != mySourceFile->end(); its++)    // Modification: 2009.01
+	{
+		FilePaths.push_back(its->second.file_name);
+	}
+	basepath = CUtil::ExtractBaseDirectory(FilePaths);
     for (its = mySourceFile->begin(); its != mySourceFile->end(); its++)    // Modification: 2009.01
 	{
-		// Get the Module name for the file for src/testing/abc.java the below steps
-		// return testing as the module name
-		std::string pathname = CUtil::ExtractFilepath(its->second.file_name); // Modification : 2016.12
-		its->second.module_name = CUtil::ExtractFilename(pathname);
+		its->second.module_name = CUtil::ExtractModuleName(its->second.file_name, basepath); // Modification : 2016.12
+		if ( ModuleMapping.count(its->second.module_name) == 0)
+		{
+			ModuleMapping[its->second.module_name] = 1;
+		}
+		else {
+			ModuleMapping[its->second.module_name] += 1;
+		}
 		if (filesToPrint != NULL && filesToPrint->size() > 0)
 		{
 			// restrict based on those files in the filesToPrint list
@@ -327,6 +339,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
         // Deal with WEB type specially
         if (its->second.class_type == WEB)  // Modification: 2009.01
 		{
+			
 			SourceFileList::iterator startpos = its;
 			SourceFileList::iterator endpos = ++startpos;
 			for (; endpos!= mySourceFile->end(); endpos++)
@@ -3092,7 +3105,6 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 
 			(*pout_csv) << endl << "Ratio of Physical to Logical SLOC,";
 		}
-		
 		unsigned int tlsloc = itto->second.log_direct + itto->second.log_decl + itto->second.log_instr;
 		if (tlsloc > 0)
 		{
@@ -3333,7 +3345,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 		iter->second->CloseOutputStream();
 
 	// print out language count summary
-    if (!PrintCountSummary( CounterForEachLanguage, total, webtotal, outputFileNamePrePend)) // Modification: 2011.10
+    if (!PrintCountSummary( CounterForEachLanguage, total, webtotal, ModuleMapping, outputFileNamePrePend)) // Modification: 2011.10
 		return 0;
 
     return 1;   // Modification: 2011.10
@@ -3374,7 +3386,9 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 	string file_type;
 	CWebCounter *webCounter;
 	WebType webType;					// Moidfication: 2011.10
-
+	vector<string> FilePaths; // Modification: 2016.12
+	string basepath;          // Modification: 2016.12
+	ModuleMap ModuleMapping;  // Modification 2016.12
 	// skip if all files are excluded
 	if (filesToPrint != NULL && filesToPrint->size() < 1 && !excludeFiles)			// Modification: 2011.05
 		return 0;
@@ -3382,12 +3396,22 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 	// display each non-web count
 	SourceFileList::iterator its;
 	SourceFileList* mySourceFile = (useListA) ? &SourceFileA : &SourceFileB;
+	for (its = mySourceFile->begin(); its != mySourceFile->end(); its++)    // Modification: 2009.01
+	{
+		//string path = CUtil::ExtractFilepath(); // Modification : 2016.12
+		FilePaths.push_back(its->second.file_name);
+	}
+	basepath = CUtil::ExtractBaseDirectory(FilePaths);
 	for (its = mySourceFile->begin(); its != mySourceFile->end(); its++)
 	{
-		// Get the Module name for the file for src/testing/abc.java the below steps
-		// return testing as the module name
-		std::string pathname = CUtil::ExtractFilepath(its->second.file_name); // Modification : 2016.12
-		its->second.module_name = CUtil::ExtractFilename(pathname);
+		its->second.module_name = CUtil::ExtractModuleName(its->second.file_name, basepath); // Modification :2016.12
+		if (ModuleMapping.count(its->second.module_name) == 0)
+		{
+			ModuleMapping[its->second.module_name] = 1;
+		}
+		else {
+			ModuleMapping[its->second.module_name] += 1;
+		}
 		if (filesToPrint != NULL && filesToPrint->size() > 0)
 		{
 			// restrict based on those files in the filesToPrint list
@@ -6300,11 +6324,10 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 	// close all files
 	for (map<int, CCodeCounter*>::iterator iter=CounterForEachLanguage.begin(); iter!=CounterForEachLanguage.end(); iter++)
 		iter->second->CloseOutputStream();
-
 	CloseTotalOutputStream();
 
 	// print out language count summary
-	if (!PrintCountSummary( CounterForEachLanguage, total, webtotal, outputFileNamePrePend))	// Modification: 2013.04  2015.12
+	if (!PrintCountSummary( CounterForEachLanguage, total, webtotal, ModuleMapping, outputFileNamePrePend))	// Modification: 2013.04  2015.12
 		return 0;
 
 	return 1;
@@ -6326,6 +6349,7 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 */
 int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 						TotalValueMap &total, WebTotalValueMap &webtotal,
+						ModuleMap &modulemap,
 						const string &outputFileNamePrePend)			// Modification: 2014.08
 {
 	ofstream *pout = NULL;
@@ -6528,6 +6552,27 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 
 		if (rCnt > 0)
 			(*pout_csv) << endl << "Total," << fTot << "," << pTot << "," << lTot << endl;
+	}
+	if (print_ascii)
+	{
+		(*pout) << endl << "Summary of Module based counts" << endl;
+		(*pout) << endl << "Module Name,File Count" << endl;
+	}
+	if (print_csv)
+	{
+		(*pout_csv) << endl << "Summary of Module based counts" << endl;
+		(*pout_csv) << endl << "Module Name,File Count" << endl;
+	}
+	for (ModuleMap::iterator it = modulemap.begin(); it != modulemap.end(); it++)
+	{
+		if (print_ascii)
+		{
+			(*pout) <<  it->first << "," << it->second << endl;
+		}
+		if (print_csv)
+		{
+			(*pout_csv) << it->first << "," << it->second << endl;
+		}
 	}
 	CloseOutputSummaryStream();
 

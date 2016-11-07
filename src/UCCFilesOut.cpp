@@ -308,13 +308,6 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
     for (its = mySourceFile->begin(); its != mySourceFile->end(); its++)    // Modification: 2009.01
 	{
 		its->second.module_name = CUtil::ExtractModuleName(its->second.file_name, basepath); // Modification : 2016.12
-		if ( ModuleMapping.count(its->second.module_name) == 0)
-		{
-			ModuleMapping[its->second.module_name] = 1;
-		}
-		else {
-			ModuleMapping[its->second.module_name] += 1;
-		}
 		if (filesToPrint != NULL && filesToPrint->size() > 0)
 		{
 			// restrict based on those files in the filesToPrint list
@@ -1458,6 +1451,13 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout).width(8);	(*pout) << its->second.SLOC_lines[PHY];
 				}
 				(*pout) << " | " << file_type;
+				if (ModuleMapping.count(its->second.module_name) == 0)
+				{
+					ModuleMapping[its->second.module_name] = its->second.SLOC_lines[PHY];
+				}
+				else {
+					ModuleMapping[its->second.module_name] += its->second.SLOC_lines[PHY];
+				}
 				(*pout) << "  " << its->second.module_name;
 				(*pout) << endl;
 				(*pout).unsetf(ios::right);
@@ -1474,6 +1474,13 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 				(*pout_csv) << its->second.SLOC_lines[LOG] << ",";
 				(*pout_csv) << its->second.SLOC_lines[PHY] << ",";
                 (*pout_csv) << file_type << ",";    // Modification: 2013.04
+				if (ModuleMapping.count(its->second.module_name) == 0)
+				{
+					ModuleMapping[its->second.module_name] = its->second.SLOC_lines[PHY];
+				}
+				else {
+					ModuleMapping[its->second.module_name] += its->second.SLOC_lines[PHY];
+				}
 				(*pout_csv) << its->second.module_name << endl;
 			}
 
@@ -3405,13 +3412,13 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 	for (its = mySourceFile->begin(); its != mySourceFile->end(); its++)
 	{
 		its->second.module_name = CUtil::ExtractModuleName(its->second.file_name, basepath); // Modification :2016.12
-		if (ModuleMapping.count(its->second.module_name) == 0)
+		/*if (ModuleMapping.count(its->second.module_name) == 0)
 		{
 			ModuleMapping[its->second.module_name] = 1;
 		}
 		else {
 			ModuleMapping[its->second.module_name] += 1;
-		}
+		}*/
 		if (filesToPrint != NULL && filesToPrint->size() > 0)
 		{
 			// restrict based on those files in the filesToPrint list
@@ -3551,6 +3558,13 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout).width(8);	(*pout) << its->second.SLOC_lines[PHY];
 				}
 				(*pout) << " | " << file_type;											// Modification: 2014.08
+				if (ModuleMapping.count(its->second.module_name) == 0)
+				{
+					ModuleMapping[its->second.module_name] = its->second.SLOC_lines[PHY];
+				}
+				else {
+					ModuleMapping[its->second.module_name] += its->second.SLOC_lines[PHY];
+				}
 				(*pout) << " " << its->second.module_name;						// Modification: 2016.12
 				(*pout) << endl;
 				(*pout).unsetf(ios::right);
@@ -3568,6 +3582,13 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 				(*pout_csv) << its->second.SLOC_lines[LOG] << ",";
 				(*pout_csv) << its->second.SLOC_lines[PHY] << ",";
 				(*pout_csv) << file_type << ",";												// Modification: 2014.08
+				if (ModuleMapping.count(its->second.module_name) == 0)
+				{
+					ModuleMapping[its->second.module_name] = its->second.SLOC_lines[PHY];
+				}
+				else {
+					ModuleMapping[its->second.module_name] += its->second.SLOC_lines[PHY];
+				}
 				(*pout_csv) << its->second.module_name << endl;					// Modification: 2016.12
 			}
 
@@ -6556,12 +6577,12 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 	if (print_ascii)
 	{
 		(*pout) << endl << "Summary of Module based counts" << endl;
-		(*pout) << endl << "Module Name,File Count" << endl;
+		(*pout) << endl << "Module Name,Physical SLOC" << endl;
 	}
 	if (print_csv)
 	{
 		(*pout_csv) << endl << "Summary of Module based counts" << endl;
-		(*pout_csv) << endl << "Module Name,File Count" << endl;
+		(*pout_csv) << endl << "Module Name,Physical SLOC" << endl;
 	}
 	for (ModuleMap::iterator it = modulemap.begin(); it != modulemap.end(); it++)
 	{

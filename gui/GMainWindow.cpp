@@ -18,6 +18,7 @@
 #include "GMainWindow.h"
 #include "GUtil.h"
 #include "GSideBySideDialog.h"
+#include "QFileInfo"
 
 #define MAX_ARGUMENTS 20
 #define ARGUMENT_LENGTH 1024
@@ -1714,10 +1715,7 @@ void GMainWindow::on_btnCustomHeader_clicked()
     QString fileName = QFileDialog::getOpenFileName(this,
         tr("Open File"), "", tr("Text File (*.txt)"));
     userHeaderFile = fileName.toUtf8().constData();
-    string labelText = "No header file added";
-    if (userHeaderFile.size() > 0)
-        labelText = "Header file:\n" + userHeaderFile;
-    ui.lblHeader->setText(QString::fromStdString(labelText));
+    ui.txtHeader->setText(fileName);
 }
 
 /*
@@ -1729,12 +1727,29 @@ void GMainWindow::on_cbxNoHeader_clicked()
 {
     if (ui.cbxNoHeader->checkState() == Qt::Checked){
         ui.btnCustomHeader->setEnabled(false);
-        ui.lblHeader->setText("");
+        ui.txtHeader->setEnabled(false);
         remove_Header = true;
     } else {
         ui.btnCustomHeader->setEnabled(true);
-        ui.lblHeader->setText("");
+        ui.txtHeader->setEnabled(true);
         remove_Header = false;
-        userHeaderFile = "";
+    }
+    ui.txtHeader->setText(QString(""));
+}
+
+void GMainWindow::on_txtHeader_textChanged(const QString &arg1)
+{
+    QString fileName = ui.txtHeader->text();
+    userHeaderFile = fileName.toUtf8().constData();
+}
+
+void GMainWindow::on_txtHeader_editingFinished()
+{
+    QString fileName = ui.txtHeader->text();
+    QFileInfo check_file(fileName);
+    if (!check_file.exists() || !check_file.isFile() || !fileName.endsWith(".txt")){
+        QMessageBox msgBox;
+        msgBox.setText("Invalid header text file path! No header is shown by default.");
+        msgBox.exec();
     }
 }

@@ -1,0 +1,20 @@
+Removal unmodified files from visual diff result
+-------------------------------------------------
+No CMdLine change
+
+Usage Example:
+UCC -d -dir <dir1> <dir2> -visualdiff
+
+-------------------------------------------------
+		CODE MAPPING
+-------------------------------------------------
+1. Functionality (remove unmodified files from visual diff result)
+    Files changed:
+    i) CmpMngr.h : modified functions
+        - void Compare(...) => string Compare(...)
+        - void print_info(file_dump_stream, diff_details_str) => string print_info(diff_details_str)
+    ii)CmpMngr.cpp :
+        - Modified function: Compare
+        - Modified function: print_info
+    iii) UCCThread.cpp :
+        - Modified function: DiffPairsInList

@@ -13,10 +13,17 @@ as the directory containing the file instead of the file name
     i) cc_main.h : Introduced new member variable
         - string module_name
 
-    i) cc_main.cpp : In method results::reset()
+    ii) cc_main.cpp : In method results::reset()
         - reset module_name = ""
 
+    iii) CUtil.cpp: 
+    Added CUtil::ExtractBaseDirectory(vector<string> &filepath)
+    Added extra function to extract the base directory
+    Also additional function ExtractModuleName()
+
+
     iii) UCCFilesOut.cpp : PrintTotalCountResults() and PrintCountResults()
-        Printed module_name extracted in UCCThread.cpp
+     Changed the function prototype for PrintCountSummary() to include additional details of module and file count mapping
+        
 
 

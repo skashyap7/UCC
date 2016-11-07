@@ -120,7 +120,7 @@ public:
     static string ExtractFilename(const string &filepath);
 	static string ExtractModuleName(const string &filepath, const string &basepath);
     static string ExtractFilepath(const string &filepath);
-	static string CUtil::ExtractBaseDirectory(vector<string> &filepath);
+	static string ExtractBaseDirectory(vector<string> &filepath);
     
 	// Helper used for smarter Estimates to help with RAM usage.
     static unsigned long long GetFileSizeInBytes( const string file );

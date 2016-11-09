@@ -1423,6 +1423,17 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 				its->second.SLOC_lines[PHY] = its->second.directive_lines[PHY] + its->second.exec_lines[PHY] + its->second.data_lines[PHY];
 				its->second.SLOC_lines[LOG] = its->second.directive_lines[LOG] + its->second.exec_lines[LOG] + its->second.data_lines[LOG];
 				its->second.total_lines = its->second.SLOC_lines[PHY] +	its->second.blank_lines + its->second.comment_lines;
+				if (ModuleMapping.count(its->second.module_name) == 0)
+				{
+					ModuleMapping[its->second.module_name].push_back(1);
+					ModuleMapping[its->second.module_name].push_back(its->second.SLOC_lines[PHY]);
+					ModuleMapping[its->second.module_name].push_back(its->second.SLOC_lines[LOG]);
+				}
+				else {
+					ModuleMapping[its->second.module_name][0] += 1;
+					ModuleMapping[its->second.module_name][1] += its->second.SLOC_lines[PHY];
+					ModuleMapping[its->second.module_name][2] += its->second.SLOC_lines[LOG];
+				}
 			}
 
 			total[class_type].num_of_file++;
@@ -1451,13 +1462,6 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout).width(8);	(*pout) << its->second.SLOC_lines[PHY];
 				}
 				(*pout) << " | " << file_type;
-				if (ModuleMapping.count(its->second.module_name) == 0)
-				{
-					ModuleMapping[its->second.module_name] = its->second.SLOC_lines[PHY];
-				}
-				else {
-					ModuleMapping[its->second.module_name] += its->second.SLOC_lines[PHY];
-				}
 				(*pout) << "  " << its->second.module_name;
 				(*pout) << endl;
 				(*pout).unsetf(ios::right);
@@ -1474,13 +1478,6 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 				(*pout_csv) << its->second.SLOC_lines[LOG] << ",";
 				(*pout_csv) << its->second.SLOC_lines[PHY] << ",";
                 (*pout_csv) << file_type << ",";    // Modification: 2013.04
-				if (ModuleMapping.count(its->second.module_name) == 0)
-				{
-					ModuleMapping[its->second.module_name] = its->second.SLOC_lines[PHY];
-				}
-				else {
-					ModuleMapping[its->second.module_name] += its->second.SLOC_lines[PHY];
-				}
 				(*pout_csv) << its->second.module_name << endl;
 			}
 
@@ -3405,20 +3402,24 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 	SourceFileList* mySourceFile = (useListA) ? &SourceFileA : &SourceFileB;
 	for (its = mySourceFile->begin(); its != mySourceFile->end(); its++)    // Modification: 2009.01
 	{
-		//string path = CUtil::ExtractFilepath(); // Modification : 2016.12
 		FilePaths.push_back(its->second.file_name);
 	}
 	basepath = CUtil::ExtractBaseDirectory(FilePaths);
 	for (its = mySourceFile->begin(); its != mySourceFile->end(); its++)
 	{
 		its->second.module_name = CUtil::ExtractModuleName(its->second.file_name, basepath); // Modification :2016.12
-		/*if (ModuleMapping.count(its->second.module_name) == 0)
+		if (ModuleMapping.count(its->second.module_name) == 0)
 		{
-			ModuleMapping[its->second.module_name] = 1;
+			ModuleMapping[its->second.module_name].push_back(1); // push file_cnt as 0
+			ModuleMapping[its->second.module_name].push_back(its->second.SLOC_lines[PHY]);
+			ModuleMapping[its->second.module_name].push_back(its->second.SLOC_lines[LOG]);
 		}
 		else {
-			ModuleMapping[its->second.module_name] += 1;
-		}*/
+			ModuleMapping[its->second.module_name][0] += 1;
+			ModuleMapping[its->second.module_name][1] += its->second.SLOC_lines[PHY];
+			ModuleMapping[its->second.module_name][2] += its->second.SLOC_lines[LOG];
+		}
+
 		if (filesToPrint != NULL && filesToPrint->size() > 0)
 		{
 			// restrict based on those files in the filesToPrint list
@@ -3558,13 +3559,6 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 					(*pout).width(8);	(*pout) << its->second.SLOC_lines[PHY];
 				}
 				(*pout) << " | " << file_type;											// Modification: 2014.08
-				if (ModuleMapping.count(its->second.module_name) == 0)
-				{
-					ModuleMapping[its->second.module_name] = its->second.SLOC_lines[PHY];
-				}
-				else {
-					ModuleMapping[its->second.module_name] += its->second.SLOC_lines[PHY];
-				}
 				(*pout) << " " << its->second.module_name;						// Modification: 2016.12
 				(*pout) << endl;
 				(*pout).unsetf(ios::right);
@@ -3582,13 +3576,6 @@ int PrintTotalCountResults( CounterForEachLangType & CounterForEachLanguage,
 				(*pout_csv) << its->second.SLOC_lines[LOG] << ",";
 				(*pout_csv) << its->second.SLOC_lines[PHY] << ",";
 				(*pout_csv) << file_type << ",";												// Modification: 2014.08
-				if (ModuleMapping.count(its->second.module_name) == 0)
-				{
-					ModuleMapping[its->second.module_name] = its->second.SLOC_lines[PHY];
-				}
-				else {
-					ModuleMapping[its->second.module_name] += its->second.SLOC_lines[PHY];
-				}
 				(*pout_csv) << its->second.module_name << endl;					// Modification: 2016.12
 			}
 
@@ -6499,6 +6486,62 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 			(*pout) << lTot << endl;
 			(*pout).unsetf(ofstream::right);
 		}
+		// Modification 2016.12
+		rCnt = fTot = pTot = lTot = 0;
+		(*pout) << endl;
+		PrintFileHeaderLine((*pout), " MODULE COUNT SUMMARY ");
+		(*pout) << endl;
+		(*pout) << "Module                        |   Number   |  Physical  |   Logical" << endl;
+		(*pout) << "Name                          |  of Files  |    SLOC    |    SLOC" << endl;
+		(*pout) << "------------------------------+------------+------------+-------------" << endl;
+		for (ModuleMap::iterator it = modulemap.begin(); it != modulemap.end(); it++)
+		{
+			rCnt += 1;
+			fTot += it->second[0];
+			pTot += it->second[1];
+			lTot += it->second[2];
+			(*pout).setf(ofstream::left);
+			(*pout).width(30);
+			(*pout) << it->first;
+			(*pout).unsetf(ofstream::left);
+			(*pout) << "|";
+			(*pout).setf(ofstream::right);
+			(*pout).width(10);
+			(*pout) << it->second[0];
+			(*pout).unsetf(ofstream::right);
+			(*pout).unsetf(ofstream::left);
+			(*pout) << "  |";
+			(*pout).setf(ofstream::right);
+			(*pout).width(10);
+			(*pout) << it->second[1];
+			(*pout).unsetf(ofstream::right);
+			(*pout).unsetf(ofstream::left);
+			(*pout) << "  |";
+			(*pout).setf(ofstream::right);
+			(*pout).width(10);
+			(*pout) << it->second[2];
+			(*pout).unsetf(ofstream::right);
+			(*pout) << endl;
+		}
+		if (rCnt > 0)
+		{
+			(*pout) << "------------------------------+------------+------------+-------------" << endl;
+			(*pout).setf(ofstream::left);
+			(*pout).width(30);
+			(*pout) << "Total";
+			(*pout).unsetf(ofstream::left);
+			(*pout) << "|";
+			(*pout).setf(ofstream::right);
+			(*pout).width(10);
+			(*pout) << fTot;
+			(*pout) << "  |";
+			(*pout).width(10);
+			(*pout) << pTot;
+			(*pout) << "  |";
+			(*pout).width(10);
+			(*pout) << lTot << endl;
+			(*pout).unsetf(ofstream::right);
+		}
 	}
 	if (print_csv)
 	{
@@ -6573,27 +6616,21 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 
 		if (rCnt > 0)
 			(*pout_csv) << endl << "Total," << fTot << "," << pTot << "," << lTot << endl;
-	}
-	if (print_ascii)
-	{
-		(*pout) << endl << "Summary of Module based counts" << endl;
-		(*pout) << endl << "Module Name,Physical SLOC" << endl;
-	}
-	if (print_csv)
-	{
-		(*pout_csv) << endl << "Summary of Module based counts" << endl;
-		(*pout_csv) << endl << "Module Name,Physical SLOC" << endl;
-	}
-	for (ModuleMap::iterator it = modulemap.begin(); it != modulemap.end(); it++)
-	{
-		if (print_ascii)
+		
+		rCnt = fTot = pTot = lTot = 0;
+		PrintFileHeaderLine((*pout_csv), "\n MODULE COUNT SUMMARY \n");
+		(*pout_csv) << "Module,Number,Physical,Logical" << endl;
+		(*pout_csv) << "Name,of Files,SLOC,SLOC" << endl;
+		for (ModuleMap::iterator it = modulemap.begin(); it != modulemap.end(); it++)
 		{
-			(*pout) <<  it->first << "," << it->second << endl;
+			rCnt += 1;
+			fTot += it->second[0];
+			pTot += it->second[1];
+			lTot += it->second[2];
+			(*pout_csv) << it->first << "," << it->second[0] << "," << it->second[1] << "," << it->second[2] << endl;
 		}
-		if (print_csv)
-		{
-			(*pout_csv) << it->first << "," << it->second << endl;
-		}
+		if (rCnt > 0)
+			(*pout_csv) << endl << "Total," << fTot << "," << pTot << "," << lTot << endl;
 	}
 	CloseOutputSummaryStream();
 

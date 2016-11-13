@@ -107,6 +107,7 @@ bool print_ascii;								//!< Print ASCII text report files
 bool print_legacy;								//!< Print legacy formatted ASCII text report files
 bool print_unified;								//!< Print all counting files in a single unified file
 bool remove_Header;                             //!< Remove Header from output files if set to True
+bool by_dir;                                    //!< Print directory based count if set to True
 
 bool g_no_warnings_to_UI = false;				//!< Suppress Warning messages to UI if true.  Warnings are still logged.
 

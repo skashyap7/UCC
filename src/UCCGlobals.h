@@ -101,6 +101,7 @@ extern	bool print_ascii;								//!< Print ASCII text report files
 extern	bool print_legacy;								//!< Print legacy formatted ASCII text report files
 extern	bool print_unified;								//!< Print all counting files in a single unified file
 extern  bool remove_Header;                             //!< Remove Header from output files if set to True
+extern  bool by_dir;                                    //!< Print directory based count if set to True 
 
 extern	bool g_no_warnings_to_UI;						//!< Suppress Warning messages to UI if true.  Still gets logged.
 

@@ -81,7 +81,8 @@ MainObject::MainObject()
 	workThreadsCount = 0;		// default is no worker threads    // Modification: 2015.12
  
     visualDiff = false;         // default don't create diff_dump.txt and highlighted_diff.html
-
+	remove_Header = false;      // default don't remove header //Modification 2016.12
+	by_dir = false;             // default don't report directory based counts //Modification 2016.12
 	// Modification: 2013.04
 	match_threshold = DIFF_MATCH_THRESHOLD;	// default modified lines threshold
 
@@ -880,6 +881,11 @@ int MainObject::ParseCommandLine(int argc, char *argv[])
 		{
 			// Remove any header from the output document
 			remove_Header = true; 
+		}
+		else if (arg == "-bydir")   // Modification: 2016.12
+		{
+			// Add additional stats on counting by directory level
+			by_dir = true;
 		}
 		else
 		{

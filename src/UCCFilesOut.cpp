@@ -6366,7 +6366,8 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 	WebType webType;
 	size_t i;
 	unsigned int fCnt, pCnt, lCnt, rCnt, fTot, pTot, lTot;
-
+	unsigned int tSlocCnt ;      // Modification 2016.12
+	float percent, perTot;                       // Modification 2016.12
 	if (print_ascii || print_legacy)
 	{
 		pout = GetOutputSummaryStream(outDir + outputFileNamePrePend);
@@ -6486,61 +6487,89 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 			(*pout) << lTot << endl;
 			(*pout).unsetf(ofstream::right);
 		}
-		// Modification 2016.12
-		rCnt = fTot = pTot = lTot = 0;
-		(*pout) << endl;
-		PrintFileHeaderLine((*pout), " MODULE COUNT SUMMARY ");
-		(*pout) << endl;
-		(*pout) << "Module                        |   Number   |  Physical  |   Logical" << endl;
-		(*pout) << "Name                          |  of Files  |    SLOC    |    SLOC" << endl;
-		(*pout) << "------------------------------+------------+------------+-------------" << endl;
-		for (ModuleMap::iterator it = modulemap.begin(); it != modulemap.end(); it++)
+		// Modification 2016. 12
+		// Show module based counts only if by_dir switch is specified
+		if (by_dir)
 		{
-			rCnt += 1;
-			fTot += it->second[0];
-			pTot += it->second[1];
-			lTot += it->second[2];
-			(*pout).setf(ofstream::left);
-			(*pout).width(30);
-			(*pout) << it->first;
-			(*pout).unsetf(ofstream::left);
-			(*pout) << "|";
-			(*pout).setf(ofstream::right);
-			(*pout).width(10);
-			(*pout) << it->second[0];
-			(*pout).unsetf(ofstream::right);
-			(*pout).unsetf(ofstream::left);
-			(*pout) << "  |";
-			(*pout).setf(ofstream::right);
-			(*pout).width(10);
-			(*pout) << it->second[1];
-			(*pout).unsetf(ofstream::right);
-			(*pout).unsetf(ofstream::left);
-			(*pout) << "  |";
-			(*pout).setf(ofstream::right);
-			(*pout).width(10);
-			(*pout) << it->second[2];
-			(*pout).unsetf(ofstream::right);
+			tSlocCnt = lTot;
+			rCnt = fTot = pTot = lTot = 0;
+			percent = perTot = 0.0;
 			(*pout) << endl;
-		}
-		if (rCnt > 0)
-		{
-			(*pout) << "------------------------------+------------+------------+-------------" << endl;
-			(*pout).setf(ofstream::left);
-			(*pout).width(30);
-			(*pout) << "Total";
-			(*pout).unsetf(ofstream::left);
-			(*pout) << "|";
-			(*pout).setf(ofstream::right);
-			(*pout).width(10);
-			(*pout) << fTot;
-			(*pout) << "  |";
-			(*pout).width(10);
-			(*pout) << pTot;
-			(*pout) << "  |";
-			(*pout).width(10);
-			(*pout) << lTot << endl;
-			(*pout).unsetf(ofstream::right);
+			PrintFileHeaderLine((*pout), " BY DIRECTORY COUNT SUMMARY ");
+			(*pout) << endl;
+			(*pout) << "Directory                     |   Number   |  Physical  |   Logical  |  Percentage " << endl;
+			(*pout) << "Name                          |  of Files  |    SLOC    |    SLOC    |     %       " << endl;
+			(*pout) << "------------------------------+------------+------------+------------+-------------" << endl;
+			for (ModuleMap::iterator it = modulemap.begin(); it != modulemap.end(); it++)
+			{
+				rCnt += 1;
+				fTot += it->second[0];
+				pTot += it->second[1];
+				lTot += it->second[2];
+				if (tSlocCnt > 0)    // Avoiding Divide by Zero
+				{
+					percent = float(it->second[2] * 100) / tSlocCnt;
+					perTot += percent;
+				}
+				else {
+					percent = 1.0;
+					perTot = 1.0;
+				}
+				(*pout).setf(ofstream::left);
+				(*pout).width(30);
+				(*pout) << it->first;
+				(*pout).unsetf(ofstream::left);
+				(*pout) << "|";
+				(*pout).setf(ofstream::right);
+				(*pout).width(10);
+				(*pout) << it->second[0];
+				(*pout).unsetf(ofstream::right);
+				(*pout).unsetf(ofstream::left);
+				(*pout) << "  |";
+				(*pout).setf(ofstream::right);
+				(*pout).width(10);
+				(*pout) << it->second[1];
+				(*pout).unsetf(ofstream::right);
+				(*pout).unsetf(ofstream::left);
+				(*pout) << "  |";
+				(*pout).setf(ofstream::right);
+				(*pout).width(10);
+				(*pout) << it->second[2];
+				(*pout).unsetf(ofstream::right);
+				(*pout).unsetf(ofstream::left);
+				(*pout) << "  |";
+				(*pout).setf(ofstream::right);
+				(*pout).width(10);
+				(*pout) << percent;
+				(*pout).unsetf(ofstream::right);
+				(*pout) << endl;
+			}
+			if (rCnt > 0)
+			{
+				(*pout) << "------------------------------+------------+------------+---------+----------------" << endl;
+				(*pout).setf(ofstream::left);
+				(*pout).width(30);
+				(*pout) << "Total";
+				(*pout).unsetf(ofstream::left);
+				(*pout) << "|";
+				(*pout).setf(ofstream::right);
+				(*pout).width(10);
+				(*pout) << fTot;
+				(*pout) << "  |";
+				(*pout).width(10);
+				(*pout) << pTot;
+				(*pout) << "  |";
+				(*pout).width(10);
+				(*pout) << lTot;
+				(*pout) << "  |";
+				(*pout).width(10);
+				(*pout) << perTot << endl;
+				(*pout).unsetf(ofstream::right);
+			}
+			(*pout) << endl;
+			(*pout) << "Directory                     |   Number   |  Physical  |   Logical  |  Percentage " << endl;
+			(*pout) << "Name                          |  of Files  |    SLOC    |    SLOC    |     %       " << endl;
+			(*pout) << "------------------------------+------------+------------+------------+-------------" << endl;
 		}
 	}
 	if (print_csv)
@@ -6616,21 +6645,39 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 
 		if (rCnt > 0)
 			(*pout_csv) << endl << "Total," << fTot << "," << pTot << "," << lTot << endl;
-		
-		rCnt = fTot = pTot = lTot = 0;
-		PrintFileHeaderLine((*pout_csv), "\n MODULE COUNT SUMMARY \n");
-		(*pout_csv) << "Module,Number,Physical,Logical" << endl;
-		(*pout_csv) << "Name,of Files,SLOC,SLOC" << endl;
-		for (ModuleMap::iterator it = modulemap.begin(); it != modulemap.end(); it++)
+		// Modification 2016. 12
+		// Show module based counts only if by_dir switch is specified
+		if (by_dir)
 		{
-			rCnt += 1;
-			fTot += it->second[0];
-			pTot += it->second[1];
-			lTot += it->second[2];
-			(*pout_csv) << it->first << "," << it->second[0] << "," << it->second[1] << "," << it->second[2] << endl;
+			tSlocCnt = lTot;   // Avoid recalculation of total logical SLOC
+			rCnt = fTot = pTot = lTot = 0;
+			percent = perTot = 0;
+			PrintFileHeaderLine((*pout_csv), "\n  BY DIRECTORY COUNT SUMMARY  \n");
+			(*pout_csv) << "Directory,Number,Physical,Logical,Percentage" << endl;
+			(*pout_csv) << "Name,of Files,SLOC,SLOC,%" << endl;
+			for (ModuleMap::iterator it = modulemap.begin(); it != modulemap.end(); it++)
+			{
+				rCnt += 1;
+				fTot += it->second[0];
+				pTot += it->second[1];
+				lTot += it->second[2];
+				if (tSlocCnt > 0)    // Avoiding Divide by Zero
+				{
+					percent = float(it->second[2] * 100) / tSlocCnt;
+					perTot += percent;
+				}
+				else {
+					percent = 1.0;
+					perTot = 1.0;
+				}
+				(*pout_csv) << it->first << "," << it->second[0] << "," << it->second[1] << "," << it->second[2] << "," << percent << endl;
+			}
+			if (rCnt > 0)
+				(*pout_csv) << endl << "Total," << fTot << "," << pTot << "," << lTot << "," << perTot << endl;
+			(*pout_csv) << endl << "Directory,Number,Physical,Logical,Percentage" << endl;
+			(*pout_csv) << "Name,of Files,SLOC,SLOC,%" << endl;
+
 		}
-		if (rCnt > 0)
-			(*pout_csv) << endl << "Total," << fTot << "," << pTot << "," << lTot << endl;
 	}
 	CloseOutputSummaryStream();
 

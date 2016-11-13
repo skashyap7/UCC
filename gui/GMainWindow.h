@@ -89,6 +89,7 @@ private slots:
 
     void on_txtHeader_editingFinished();
 
+
 private:
     Ui::GMainWindowClass ui;
 

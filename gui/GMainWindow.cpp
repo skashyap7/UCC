@@ -359,6 +359,10 @@ void GMainWindow::on_btnStart_clicked()
 	argList.append("-outdir");
 	argList.append(ui.txtOutputDir->text());
 
+    if (ui.cbxNoHeader->isChecked())
+        argList.append("-noheader");
+    if (ui.cbxDirCount->isChecked())
+        argList.append("-bydir");
 	// process program options
     if (ui.chkDifferencing->isChecked())
     {
@@ -1728,11 +1732,9 @@ void GMainWindow::on_cbxNoHeader_clicked()
     if (ui.cbxNoHeader->checkState() == Qt::Checked){
         ui.btnCustomHeader->setEnabled(false);
         ui.txtHeader->setEnabled(false);
-        remove_Header = true;
     } else {
         ui.btnCustomHeader->setEnabled(true);
         ui.txtHeader->setEnabled(true);
-        remove_Header = false;
     }
     ui.txtHeader->setText(QString(""));
 }
@@ -1753,3 +1755,4 @@ void GMainWindow::on_txtHeader_editingFinished()
         msgBox.exec();
     }
 }
+

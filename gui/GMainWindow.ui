@@ -594,10 +594,10 @@
       <widget class="QGroupBox" name="grpbOutputFormat">
        <property name="geometry">
         <rect>
-         <x>300</x>
+         <x>290</x>
          <y>100</y>
          <width>141</width>
-         <height>142</height>
+         <height>171</height>
         </rect>
        </property>
        <property name="title">
@@ -651,6 +651,13 @@
          <widget class="QCheckBox" name="chkCc4Enable">
           <property name="text">
            <string>CC4 Enable</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="cbxDirCount">
+          <property name="text">
+           <string>Dir Count Enable</string>
           </property>
          </widget>
         </item>
@@ -915,6 +922,12 @@
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_9">
         <item>

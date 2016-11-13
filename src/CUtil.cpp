@@ -945,6 +945,11 @@ string CUtil::ExtractFilename(const string &filepath)
     else
         return filename;
 }
+// Modification 2016.12 (Helper function)
+bool compareLength(const string &a, const string &b)
+{
+	return (a.size() < b.size());
+}
 /*!
 * 1. Function Description:
 *    Extracts the base directory in the list of filepaths.
@@ -965,13 +970,16 @@ string CUtil::ExtractBaseDirectory(vector<string> &filepaths)
 #else
 	char separator = '\\';				 // Windows
 #endif
+	// Sort the filepaths list to ensure the matchString is the longest of all
+	std::sort(filepaths.begin(), filepaths.end(), compareLength);
 	vector<string>::iterator it = filepaths.begin();
+	pair<string::iterator, string::iterator> s_itr;
 	int maxLength = it->length();
 	string matchString = *it;
 	for( it = filepaths.begin()+1; it != filepaths.end(); it++ )
 	{
 		string path = *it;
-		pair<string::iterator, string::iterator> s_itr = std::mismatch(matchString.begin(),matchString.end(),path.begin());
+		s_itr = std::mismatch(matchString.begin(),matchString.end(),path.begin());
 		if (s_itr.first - matchString.begin() < maxLength)
 			maxLength = s_itr.first - matchString.begin();
 	}

@@ -429,7 +429,7 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 				r_htm.SLOC_lines[PHY] = r_htm.exec_lines[PHY] + r_htm.data_lines[PHY];
 				r_htm.SLOC_lines[LOG] = r_htm.exec_lines[LOG] + r_htm.data_lines[LOG];
 				r_htm.total_lines = r_htm.SLOC_lines[PHY] +	r_htm.blank_lines + r_htm.comment_lines;
-
+				
 				r_js.SLOC_lines[PHY] = r_js.exec_lines[PHY] + r_js.data_lines[PHY];
 				r_js.SLOC_lines[LOG] = r_js.exec_lines[LOG] + r_js.data_lines[LOG];
 				r_js.total_lines = r_js.SLOC_lines[PHY] +	r_js.blank_lines + r_js.comment_lines;
@@ -442,6 +442,18 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 				r_php.SLOC_lines[LOG] = r_php.directive_lines[LOG] + r_php.exec_lines[LOG] + r_php.data_lines[LOG];
 				r_php.total_lines = r_php.SLOC_lines[PHY] +	r_php.blank_lines + r_php.comment_lines;
 
+				// Modification 2016.12
+				if (ModuleMapping.count(r_vbs.module_name) == 0)
+				{
+					ModuleMapping[r_vbs.module_name].push_back(1);
+					ModuleMapping[r_vbs.module_name].push_back(r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_php.SLOC_lines[PHY]);
+					ModuleMapping[r_vbs.module_name].push_back(r_htm.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_php.SLOC_lines[LOG]);
+				}
+				else {
+					ModuleMapping[r_vbs.module_name][0] += 1;
+					ModuleMapping[r_vbs.module_name][1] += r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_php.SLOC_lines[PHY];
+					ModuleMapping[r_vbs.module_name][2] += r_htm.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_php.SLOC_lines[LOG];
+				}
                 // print the result in ASCII format
                 if (print_ascii || print_legacy)    // Modification: 2011.10
 				{
@@ -590,7 +602,19 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 				r_java.SLOC_lines[PHY] = r_java.directive_lines[PHY] + r_java.exec_lines[PHY] + r_java.data_lines[PHY];
 				r_java.SLOC_lines[LOG] = r_java.directive_lines[LOG] + r_java.exec_lines[LOG] + r_java.data_lines[LOG];
 				r_java.total_lines = r_java.SLOC_lines[PHY] +	r_java.blank_lines + r_java.comment_lines;
-
+				
+				// Modification 2016.12
+				if (ModuleMapping.count(r_vbs.module_name) == 0)
+				{
+					ModuleMapping[r_vbs.module_name].push_back(1);
+					ModuleMapping[r_vbs.module_name].push_back(r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_java.SLOC_lines[PHY]);
+					ModuleMapping[r_vbs.module_name].push_back(r_htm.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_java.SLOC_lines[LOG]);
+				}
+				else {
+					ModuleMapping[r_vbs.module_name][0] += 1;
+					ModuleMapping[r_vbs.module_name][1] += r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_java.SLOC_lines[PHY];
+					ModuleMapping[r_vbs.module_name][2] += r_htm.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_java.SLOC_lines[LOG];
+				}
                 if (print_ascii || print_legacy)    // Modification: 2011.10
 				{
 					(*pout).setf(ios::right);
@@ -754,7 +778,19 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
                 r_css.SLOC_lines[PHY] = r_css.exec_lines[PHY] + r_css.data_lines[PHY];  // Modification: 2011.10
                 r_css.SLOC_lines[LOG] = r_css.exec_lines[LOG] + r_css.data_lines[LOG];  // Modification: 2011.10
                 r_css.total_lines = r_css.SLOC_lines[PHY] +	r_css.blank_lines + r_css.comment_lines;    // Modification: 2011.10
-
+																										
+				//Modification 2016.12
+				if (ModuleMapping.count(r_htm.module_name) == 0)
+				{
+					ModuleMapping[r_htm.module_name].push_back(1);
+					ModuleMapping[r_htm.module_name].push_back(r_htm.SLOC_lines[PHY] + r_jsc.SLOC_lines[PHY] + r_vbsc.SLOC_lines[PHY] + r_jss.SLOC_lines[PHY] + r_vbss.SLOC_lines[PHY] + r_css.SLOC_lines[PHY]);
+					ModuleMapping[r_htm.module_name].push_back(r_htm.SLOC_lines[LOG] + r_jsc.SLOC_lines[LOG] + r_vbsc.SLOC_lines[LOG] + r_jss.SLOC_lines[LOG] + r_vbss.SLOC_lines[LOG] + r_css.SLOC_lines[LOG]);
+				}
+				else {
+					ModuleMapping[r_htm.module_name][0] += 1;
+					ModuleMapping[r_htm.module_name][1] += r_htm.SLOC_lines[PHY] + r_jsc.SLOC_lines[PHY] + r_vbsc.SLOC_lines[PHY] + r_jss.SLOC_lines[PHY] + r_vbss.SLOC_lines[PHY] + r_css.SLOC_lines[PHY];
+					ModuleMapping[r_htm.module_name][2] += r_htm.SLOC_lines[LOG] + r_jsc.SLOC_lines[LOG] + r_vbsc.SLOC_lines[LOG] + r_jss.SLOC_lines[LOG] + r_vbss.SLOC_lines[LOG] + r_css.SLOC_lines[LOG];
+				}
                 if (print_ascii || print_legacy)    // Modification: 2011.10
 				{
 					(*pout).setf(ios::right);
@@ -926,6 +962,17 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 				r_cs.SLOC_lines[LOG] = r_cs.exec_lines[LOG] + r_cs.data_lines[LOG];
 				r_cs.total_lines = r_cs.SLOC_lines[PHY] +	r_cs.blank_lines + r_cs.comment_lines;
 
+				if (ModuleMapping.count(r_xml.module_name) == 0)
+				{
+					ModuleMapping[r_xml.module_name].push_back(1);
+					ModuleMapping[r_xml.module_name].push_back(r_xml.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_cs.SLOC_lines[PHY]);
+					ModuleMapping[r_xml.module_name].push_back(r_xml.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_cs.SLOC_lines[LOG]);
+				}
+				else {
+					ModuleMapping[r_xml.module_name][0] += 1;
+					ModuleMapping[r_xml.module_name][1] += r_xml.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_cs.SLOC_lines[PHY];
+					ModuleMapping[r_xml.module_name][2] += r_xml.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_cs.SLOC_lines[LOG];
+				}
 				if (print_ascii || print_legacy)
 				{
 					(*pout).setf(ios::right);
@@ -1085,6 +1132,17 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 				r_cfs.SLOC_lines[LOG] = r_cfs.exec_lines[LOG] + r_cfs.data_lines[LOG];
 				r_cfs.total_lines = r_cfs.SLOC_lines[PHY] +	r_cfs.blank_lines + r_cfs.comment_lines;
 
+				if (ModuleMapping.count(r_htm.module_name) == 0)
+				{
+					ModuleMapping[r_htm.module_name].push_back(1);
+					ModuleMapping[r_htm.module_name].push_back(r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_sql.SLOC_lines[PHY] + r_cfm.SLOC_lines[PHY] + r_cfs.SLOC_lines[PHY]);
+					ModuleMapping[r_htm.module_name].push_back(r_htm.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_sql.SLOC_lines[LOG] + r_cfm.SLOC_lines[LOG] + r_cfs.SLOC_lines[LOG]);
+				}
+				else {
+					ModuleMapping[r_htm.module_name][0] += 1;
+					ModuleMapping[r_htm.module_name][1] += r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_sql.SLOC_lines[PHY] + r_cfm.SLOC_lines[PHY] + r_cfs.SLOC_lines[PHY];
+					ModuleMapping[r_htm.module_name][2] += r_htm.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_sql.SLOC_lines[LOG] + r_cfm.SLOC_lines[LOG] + r_cfs.SLOC_lines[LOG];
+				}
                 if (print_ascii || print_legacy)    // Modification: 2011.10
 				{
 					(*pout).setf(ios::right);
@@ -1256,7 +1314,18 @@ int PrintCountResults( CounterForEachLangType & CounterForEachLanguage,
 				r_cs.SLOC_lines[PHY] = r_cs.exec_lines[PHY] + r_cs.data_lines[PHY];
 				r_cs.SLOC_lines[LOG] = r_cs.exec_lines[LOG] + r_cs.data_lines[LOG];
 				r_cs.total_lines = r_cs.SLOC_lines[PHY] +	r_cs.blank_lines + r_cs.comment_lines;
-
+				// Modification 2016.12
+				if (ModuleMapping.count(r_vbs.module_name) == 0)
+				{
+					ModuleMapping[r_vbs.module_name].push_back(1);
+					ModuleMapping[r_vbs.module_name].push_back(r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_cs.SLOC_lines[PHY]);
+					ModuleMapping[r_vbs.module_name].push_back(r_htm.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_cs.SLOC_lines[LOG]);
+				}
+				else {
+					ModuleMapping[r_vbs.module_name][0] += 1;
+					ModuleMapping[r_vbs.module_name][1] += r_htm.SLOC_lines[PHY] + r_js.SLOC_lines[PHY] + r_vbs.SLOC_lines[PHY] + r_cs.SLOC_lines[PHY];
+					ModuleMapping[r_vbs.module_name][2] += r_htm.SLOC_lines[LOG] + r_js.SLOC_lines[LOG] + r_vbs.SLOC_lines[LOG] + r_cs.SLOC_lines[LOG];
+				}
                 if (print_ascii || print_legacy)    // Modification: 2011.10
 				{
 					(*pout).setf(ios::right);

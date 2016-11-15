@@ -196,7 +196,7 @@ int PrintFileHeader(ofstream &pout, const string &title, const string &cmd) // M
 *    pout: output file stream
 *
 * 3. Creation time and Owner:
-*    Version 2016.12
+	*    Version 2016.12
 */
 int PrintFileFooter(ofstream &pout)
 {
@@ -6434,7 +6434,7 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 	ClassType class_type;
 	WebType webType;
 	size_t i;
-	unsigned int fCnt, pCnt, lCnt, rCnt, fTot, pTot, lTot;
+	unsigned int fCnt, pCnt, lCnt, rCnt, fTot, pTot, lTot, langCnt;
 	unsigned int tSlocCnt ;      // Modification 2016.12
 	float percent, perTot;                       // Modification 2016.12
 	if (print_ascii || print_legacy)
@@ -6453,11 +6453,10 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 		(*pout) << "Name                          |  of Files  |    SLOC    |    SLOC" << endl;
 		(*pout) << "------------------------------+------------+------------+-------------" << endl;
 
-		rCnt = fTot = pTot = lTot = 0;
+		rCnt = fTot = pTot = lTot = langCnt = 0;
 		for (map<int, CCodeCounter*>::iterator itso = ++CounterForEachLanguage.begin(); itso != CounterForEachLanguage.end(); itso++)
 		{
 			class_type = itso->second->classtype;
-
 			if (itso->second->file_extension.size() > 0)
 			{
 				for (i = 0; i < itso->second->file_extension.size(); i++)
@@ -6479,7 +6478,7 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 					fTot += fCnt;
 					pTot += pCnt;
 					lTot += lCnt;
-
+					langCnt += 1;   // Modification 2016.12
 					(*pout).setf(ofstream::left);
 					(*pout).width(30);
 					(*pout) << itso->second->language_name;
@@ -6541,8 +6540,12 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 		{
 			(*pout) << "------------------------------+------------+------------+-------------" << endl;
 			(*pout).setf(ofstream::left);
-			(*pout).width(30);
-			(*pout) << "Total";
+			(*pout).width(17);
+			(*pout) << "Totals:";
+			(*pout).width(3);
+			(*pout) << langCnt;
+			(*pout).width(10);
+			(*pout) << "Languages";
 			(*pout).unsetf(ofstream::left);
 			(*pout) << "|";
 			(*pout).setf(ofstream::right);
@@ -6563,12 +6566,12 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 			tSlocCnt = lTot;
 			rCnt = fTot = pTot = lTot = 0;
 			percent = perTot = 0.0;
-			(*pout) << endl;
+			(*pout) << endl <<endl;
 			PrintFileHeaderLine((*pout), " BY DIRECTORY COUNT SUMMARY ");
 			(*pout) << endl;
-			(*pout) << "Directory                     |   Number   |  Physical  |   Logical  |  Percentage " << endl;
-			(*pout) << "Name                          |  of Files  |    SLOC    |    SLOC    |     %       " << endl;
-			(*pout) << "------------------------------+------------+------------+------------+-------------" << endl;
+			(*pout) << "       Directories            |   Number   |  Physical  |   Logical  |  % of Total   " << endl;
+			(*pout) << "  Name     + SubDirectories   |  of Files  |    SLOC    |    SLOC    |  Logical SLOC " << endl;
+			(*pout) << "------------------------------+------------+------------+------------+---------------" << endl;
 			for (ModuleMap::iterator it = modulemap.begin(); it != modulemap.end(); it++)
 			{
 				rCnt += 1;
@@ -6615,7 +6618,10 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 			}
 			if (rCnt > 0)
 			{
-				(*pout) << "------------------------------+------------+------------+---------+----------------" << endl;
+				(*pout) << "------------------------------+------------+------------+------------+---------------" << endl;
+				(*pout) << "     Directories              |   Number   |  Physical  |   Logical  |  % of Total   " << endl;
+				(*pout) << "       Total                  |  of Files  |    SLOC    |    SLOC    |  Logical SLOC " << endl;
+				(*pout) << "------------------------------+------------+------------+------------+---------------" << endl;
 				(*pout).setf(ofstream::left);
 				(*pout).width(30);
 				(*pout) << "Total";
@@ -6635,10 +6641,6 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 				(*pout) << perTot << endl;
 				(*pout).unsetf(ofstream::right);
 			}
-			(*pout) << endl;
-			(*pout) << "Directory                     |   Number   |  Physical  |   Logical  |  Percentage " << endl;
-			(*pout) << "Name                          |  of Files  |    SLOC    |    SLOC    |     %       " << endl;
-			(*pout) << "------------------------------+------------+------------+------------+-------------" << endl;
 		}
 	}
 	if (print_csv)
@@ -6682,7 +6684,7 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 					fTot += fCnt;
 					pTot += pCnt;
 					lTot += lCnt;
-
+					langCnt += 1;
 					(*pout_csv) << itso->second->language_name << "," << fCnt << "," << pCnt << "," << lCnt << endl;
 
 					rCnt++;
@@ -6713,7 +6715,7 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 		}
 
 		if (rCnt > 0)
-			(*pout_csv) << endl << "Total," << fTot << "," << pTot << "," << lTot << endl;
+			(*pout_csv) << endl << "Total  "<<langCnt <<" Languages," << fTot << "," << pTot << "," << lTot << endl;
 		// Modification 2016. 12
 		// Show module based counts only if by_dir switch is specified
 		if (by_dir)
@@ -6722,8 +6724,8 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 			rCnt = fTot = pTot = lTot = 0;
 			percent = perTot = 0;
 			PrintFileHeaderLine((*pout_csv), "\n  BY DIRECTORY COUNT SUMMARY  \n");
-			(*pout_csv) << "Directory,Number,Physical,Logical,Percentage" << endl;
-			(*pout_csv) << "Name,of Files,SLOC,SLOC,%" << endl;
+			(*pout_csv) << "Directories,Number,Physical,Logical,% of Total" << endl;
+			(*pout_csv) << "Name,of Files,SLOC,SLOC,Logical SLOC" << endl;
 			for (ModuleMap::iterator it = modulemap.begin(); it != modulemap.end(); it++)
 			{
 				rCnt += 1;
@@ -6742,10 +6744,11 @@ int PrintCountSummary( CounterForEachLangType & CounterForEachLanguage,
 				(*pout_csv) << it->first << "," << it->second[0] << "," << it->second[1] << "," << it->second[2] << "," << percent << endl;
 			}
 			if (rCnt > 0)
+			{
 				(*pout_csv) << endl << "Total," << fTot << "," << pTot << "," << lTot << "," << perTot << endl;
-			(*pout_csv) << endl << "Directory,Number,Physical,Logical,Percentage" << endl;
-			(*pout_csv) << "Name,of Files,SLOC,SLOC,%" << endl;
-
+				(*pout_csv) << endl << "Directories,Number,Physical,Logical,% of Total" << endl;
+				(*pout_csv) << "Total,of Files,SLOC,SLOC,Logical SLOC" << endl;
+			}
 		}
 	}
 	CloseOutputSummaryStream();

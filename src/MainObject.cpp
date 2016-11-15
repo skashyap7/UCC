@@ -882,7 +882,7 @@ int MainObject::ParseCommandLine(int argc, char *argv[])
 			// Remove any header from the output document
 			remove_Header = true; 
 		}
-		else if (arg == "-bydir")   // Modification: 2016.12
+		else if (arg == "-subdirsummary")   // Modification: 2016.12
 		{
 			// Add additional stats on counting by directory level
 			by_dir = true;
@@ -1151,16 +1151,22 @@ void MainObject::ShowUsage(const string &option, bool do_exit, string * outMsg )
 		msg += "Usage: ucc -nouncounted\n\n";
 		msg += " -nouncounted    Disables reports or messages about uncounted files.\n";
 	}
-	else if (option == "-noheader")
+	else if (option == "-noheader") // Modification 2016.12
 	{
 		msg += "Usage: ucc -noheader\n\n";
 		msg += " -noheader    Removes the default header in reports.\n";
 	}
-	else if (option == "-header")
+	else if (option == "-header")  // Modification 2016.12
 	{
 		msg += "Usage: ucc -header <filename>\n\n";
 		msg += " -header <filename>    Replaces the default header in the reports with contents\n";
 		msg += "                       of the <filename>\n";
+	}
+	else if (option == "-subdirsummary")     // Modification 2016.12
+	{
+		msg += "Usage: ucc -subdirsummary \n\n";
+		msg += " -subdirsummary    Appends directory based count information to summary\n";
+		msg += "                   reports.\n";
 	}
 	else if (option == "-h" || option == "-help")
 	{
@@ -1230,7 +1236,8 @@ void MainObject::ShowUsage(const string &option, bool do_exit, string * outMsg )
 		msg += " -nouncounted       Disables reports or messages about uncounted files.\n";
 		msg += " -header <filename> Replaces the default header in the reports with contents\n";
 		msg += "                    of the <filename>\n";
-		msg += " -noheader          Removes the default header in reports.\n";
+		msg += " -noheader          Removes the default header in reports.\n"; // Modification 2016.12
+		msg += " -subdirsummary     Reports additional directory based counts in the summary.\n"; 
 		msg += " -help <option>     Displays this usage or usage for a specified option.\n";
 	}
 

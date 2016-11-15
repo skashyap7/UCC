@@ -74,7 +74,7 @@ extern	string	outDir;			//!< Output directory
 	* Defines a map of count totals.
 	*/
 	typedef map<int, TotalValue> TotalValueMap;
-	typedef map<string, vector<int>> ModuleMap;  // Modification 2016.12
+	typedef map<string, vector<int> > ModuleMap;  // Modification 2016.12
 
 	//! Structure to contain web language count totals.
 	/*!
